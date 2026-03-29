@@ -253,6 +253,10 @@ img {
   font-size: 0.78rem;
 }
 
+.section-eyebrow {
+  font-size: 1rem;
+}
+
 .hero h1,
 .section-heading h2 {
   font-family: 'Bebas Neue', cursive;
@@ -262,7 +266,7 @@ img {
 
 .hero h1 {
   margin-top: 16px;
-  font-size: clamp(4.4rem, 10vw, 8rem);
+  font-size: clamp(3.6rem, 8vw, 6.6rem);
   max-width: 9ch;
 }
 
@@ -932,13 +936,15 @@ img {
 
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(2, minmax(320px, 440px));
+  justify-content: center;
+  gap: 24px;
 }
 
 .service-card {
-  padding: 26px;
-  border-radius: 26px;
+  min-height: 260px;
+  padding: 34px;
+  border-radius: 30px;
   border: 1px solid rgba(9, 24, 42, 0.08);
   background:
     linear-gradient(180deg, rgba(17, 37, 64, 0.98), rgba(12, 24, 42, 0.92)),
@@ -962,12 +968,13 @@ img {
 
 .service-card h3 {
   margin-top: 18px;
-  font-size: 1.5rem;
+  font-size: 1.7rem;
 }
 
 .service-card p {
-  margin-top: 10px;
+  margin-top: 14px;
   color: var(--text-soft);
+  font-size: 1.02rem;
 }
 
 .selection-overlay,

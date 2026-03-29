@@ -3,124 +3,298 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>V1NITO - Vinos</title>
+  <title>FF Motors | Venta de Autos</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manjari:wght@100;400;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-  <header class="header">
-    <div class="header-inner">
-      <a href="#" class="logo">
-        <span class="logo-v">V</span><span class="logo-1">1</span><span class="logo-nito">NITO</span>
+  <header class="site-header">
+    <div class="header-shell">
+      <a href="#inicio" class="logo">
+        <span class="logo-mark">FF</span>
+        <span class="logo-copy">
+          <strong>Motors</strong>
+          <small>Stock real de autos</small>
+        </span>
       </a>
-      <nav class="nav">
-        <a href="#catalogo" class="nav-link">Cat&aacute;logo</a>
-        <button class="cart-btn" id="cartBtn" aria-label="Abrir carrito">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="9" cy="21" r="1"></circle>
-            <circle cx="20" cy="21" r="1"></circle>
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-          </svg>
-          <span class="cart-count" id="cartCount">0</span>
-        </button>
+
+      <nav class="main-nav">
+        <a href="#catalogo">Stock</a>
+        <a href="#servicios">Servicios</a>
+        <a href="#contacto">Contacto</a>
       </nav>
+
+      <div class="header-actions">
+        <a class="header-whatsapp" id="headerWhatsappLink" href="#" target="_blank" rel="noreferrer">
+          WhatsApp
+        </a>
+        <button class="selection-btn" id="selectionBtn" type="button" aria-label="Abrir seleccion">
+          <span>Seleccion</span>
+          <span class="selection-count" id="selectionCount">0</span>
+        </button>
+      </div>
     </div>
   </header>
 
-  <section class="hero">
-    <div class="hero-grain"></div>
-    <div class="hero-content">
-      <p class="hero-kicker">Selecci&oacute;n curada y entregas en C&oacute;rdoba</p>
-      <h1 class="hero-title">Siempre es hora de un vinito</h1>
-      <p class="hero-sub">Una selecci&oacute;n con onda para abrir algo rico, brindar y convertir cualquier noche en plan.</p>
-      <div class="hero-actions">
-        <a href="#catalogo" class="hero-cta">Ver cat&aacute;logo</a>
-        <p class="hero-note">Pedidos por DM o WhatsApp</p>
+  <main>
+    <section class="hero" id="inicio">
+      <div class="hero-copy">
+        <p class="eyebrow">Usados seleccionados | gestion simple | atencion directa</p>
+        <h1>Autos listos para salir a la calle.</h1>
+        <p class="hero-text">
+          FF Motors publica unidades con fotos reales, datos claros y seguimiento comercial por WhatsApp. Elegi, compara y arma tu consulta en minutos.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#catalogo" class="primary-btn">Ver stock disponible</a>
+          <a href="#contacto" class="secondary-btn">Hablar con un asesor</a>
+        </div>
+
+        <div class="hero-stats">
+          <article class="stat-card">
+            <strong id="heroCount">0</strong>
+            <span>unidades publicadas</span>
+          </article>
+          <article class="stat-card">
+            <strong id="heroBrands">0</strong>
+            <span>marcas activas</span>
+          </article>
+          <article class="stat-card">
+            <strong id="heroAverageYear">--</strong>
+            <span>ano promedio</span>
+          </article>
+        </div>
       </div>
-    </div>
 
-    <div class="hero-scene" aria-hidden="true">
-      <div class="collage-card">
-        <span class="collage-piece disco disco-main"></span>
-        <span class="collage-piece disco disco-mini"></span>
-        <span class="collage-piece pour-hand"></span>
-        <span class="collage-piece pour-stream"></span>
-        <span class="collage-piece central-bottle"></span>
-        <span class="collage-piece can-hand"></span>
-        <span class="collage-piece red-glove"></span>
-        <span class="collage-piece citrus-drink"></span>
-        <span class="collage-piece martini"></span>
-        <span class="collage-piece wine-hand"></span>
-        <span class="collage-piece lips"></span>
-        <span class="collage-piece profile-face"></span>
-        <span class="collage-piece sparkle sparkle-1"></span>
-        <span class="collage-piece sparkle sparkle-2"></span>
+      <div class="hero-visual">
+        <div class="hero-glow hero-glow-1"></div>
+        <div class="hero-glow hero-glow-2"></div>
+
+        <article class="featured-unit" id="featuredUnit">
+          <div class="featured-media" id="featuredMedia">
+            <div class="image-placeholder hero-placeholder">
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <path d="M11 38l4-12a6 6 0 0 1 5.7-4.1h22.7a6 6 0 0 1 5.7 4.1L53 38h3a3 3 0 0 1 3 3v4a3 3 0 0 1-3 3h-2a5 5 0 0 1-10 0H20a5 5 0 0 1-10 0H8a3 3 0 0 1-3-3v-4a3 3 0 0 1 3-3h3zm10.6-10a2 2 0 0 0-1.9 1.3L17 38h30l-2.7-8.7a2 2 0 0 0-1.9-1.3zM15 48a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm34 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"></path>
+              </svg>
+            </div>
+          </div>
+
+          <div class="featured-body">
+            <p class="featured-label">Unidad destacada</p>
+            <h2 id="featuredTitle">Cargando stock...</h2>
+            <p class="featured-specs" id="featuredSpecs">Seleccionando la mejor unidad del catalogo</p>
+
+            <div class="featured-highlights" id="featuredHighlights">
+              <span>Fotos reales</span>
+              <span>Consulta directa</span>
+              <span>Datos verificados</span>
+            </div>
+
+            <div class="featured-footer">
+              <div>
+                <small>Precio publicado</small>
+                <strong id="featuredPrice">--</strong>
+              </div>
+              <button class="feature-btn" id="featuredActionBtn" type="button">Ver ficha</button>
+            </div>
+          </div>
+        </article>
+
+        <aside class="hero-side-card">
+          <p class="hero-side-eyebrow">Compra con criterio</p>
+          <ul class="hero-side-list">
+            <li>Stock filtrable por tipo y marca.</li>
+            <li>Galeria con hasta 15 fotos por unidad.</li>
+            <li>Consulta armada por WhatsApp desde la web.</li>
+          </ul>
+        </aside>
       </div>
-    </div>
+    </section>
 
-    <p class="hero-footer">Env&iacute;os por C&oacute;rdoba &middot; pedidos por DM</p>
-  </section>
+    <section class="benefits-strip">
+      <article>
+        <strong>Ingreso rapido</strong>
+        <p>Explora el stock con busqueda, filtros y orden por precio, ano o kilometraje.</p>
+      </article>
+      <article>
+        <strong>Presentacion clara</strong>
+        <p>Cada unidad muestra modelo, version, combustible, transmision, color y precio.</p>
+      </article>
+      <article>
+        <strong>Contacto comercial</strong>
+        <p>Guarda varias unidades y envia una sola consulta con tus datos al asesor.</p>
+      </article>
+    </section>
 
-  <section class="intro-strip">
-    <p class="intro-strip-text">
-      Vinos ricos, lindas etiquetas y una est&eacute;tica de sobremesa larga. Elegimos botellas para compartir, regalar o abrir sin esperar una ocasi&oacute;n especial.
-    </p>
-  </section>
-
-  <section id="catalogo" class="catalogo">
-    <div class="section-header">
-      <h2 class="section-title">Nuestros vinos</h2>
-      <div class="filters" id="filters"></div>
-    </div>
-
-    <div class="loading" id="loading">
-      <div class="spinner"></div>
-      <p>Cargando vinos...</p>
-    </div>
-
-    <div class="error-msg" id="errorMsg" style="display:none">
-      <p>No se pudieron cargar los vinos. Verific&aacute; la configuraci&oacute;n de Google Sheets.</p>
-      <button onclick="loadWines()" class="retry-btn">Reintentar</button>
-    </div>
-
-    <div class="wines-grid" id="winesGrid"></div>
-  </section>
-
-  <div class="cart-overlay" id="cartOverlay"></div>
-  <aside class="cart-sidebar" id="cartSidebar">
-    <div class="cart-header">
-      <h3>Tu pedido</h3>
-      <button class="cart-close" id="cartClose" aria-label="Cerrar carrito">&times;</button>
-    </div>
-    <div class="cart-items" id="cartItems">
-      <p class="cart-empty">Tu carrito est&aacute; vac&iacute;o</p>
-    </div>
-    <div class="cart-footer" id="cartFooter" style="display:none">
-      <div class="cart-total">
-        <span>Total:</span>
-        <span id="cartTotal">$0</span>
+    <section class="inventory-section" id="catalogo">
+      <div class="section-heading">
+        <div>
+          <p class="section-eyebrow">Stock disponible</p>
+          <h2>Elegi tu proxima unidad</h2>
+        </div>
+        <p class="results-summary" id="resultsSummary">Cargando stock...</p>
       </div>
-      <div class="checkout-fields">
-        <input type="text" id="clientName" placeholder="Tu nombre" required>
-        <input type="text" id="clientAddress" placeholder="Direcci&oacute;n de entrega" required>
+
+      <div class="inventory-toolbar">
+        <label class="search-field" for="searchInput">
+          <span>Buscar</span>
+          <input
+            type="search"
+            id="searchInput"
+            placeholder="Marca, modelo, version, combustible..."
+            autocomplete="off"
+          >
+        </label>
+
+        <label class="sort-field" for="sortSelect">
+          <span>Ordenar por</span>
+          <select id="sortSelect">
+            <option value="featured">Destacados</option>
+            <option value="year-desc">Ano mas nuevo</option>
+            <option value="km-asc">Menor kilometraje</option>
+            <option value="price-asc">Menor precio</option>
+            <option value="price-desc">Mayor precio</option>
+          </select>
+        </label>
       </div>
-      <button class="checkout-btn" id="checkoutBtn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"></path>
-          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 0 0 .612.638l4.685-1.228A11.953 11.953 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.137 0-4.146-.587-5.863-1.606l-.335-.203-2.783.73.662-2.645-.222-.352A9.935 9.935 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"></path>
-        </svg>
-        Enviar pedido por WhatsApp
-      </button>
+
+      <div class="filters-panel">
+        <div class="filter-row">
+          <span class="filter-title">Tipo</span>
+          <div class="filters" id="typeFilters"></div>
+        </div>
+        <div class="filter-row">
+          <span class="filter-title">Marca</span>
+          <div class="filters" id="brandFilters"></div>
+        </div>
+      </div>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Cargando autos...</p>
+      </div>
+
+      <div class="error-msg" id="errorMsg" hidden>
+        <p>No se pudo cargar el stock. Revisa el nombre de la hoja y la publicacion de Google Sheets.</p>
+        <button class="retry-btn" id="retryBtn" type="button">Reintentar</button>
+      </div>
+
+      <div class="empty-state" id="emptyState" hidden>
+        <h3>No encontramos unidades con esos filtros</h3>
+        <p>Prueba limpiando la busqueda o cambiando tipo y marca.</p>
+      </div>
+
+      <div class="vehicles-grid" id="vehiclesGrid"></div>
+    </section>
+
+    <section class="services-section" id="servicios">
+      <div class="section-heading services-heading">
+        <div>
+          <p class="section-eyebrow">Servicios</p>
+          <h2>Una pagina pensada para vender autos</h2>
+        </div>
+        <p class="services-text">El stock se puede navegar rapido, se ve profesional en mobile y deja lista la consulta comercial.</p>
+      </div>
+
+      <div class="services-grid">
+        <article class="service-card">
+          <span class="service-number">01</span>
+          <h3>Catalogo visual</h3>
+          <p>Las fotos mandan. Cada ficha prioriza imagen, precio y datos mecanicos en un formato limpio.</p>
+        </article>
+
+        <article class="service-card">
+          <span class="service-number">02</span>
+          <h3>Consulta guiada</h3>
+          <p>El usuario puede guardar unidades y mandar un mensaje armado con nombre, telefono e interes.</p>
+        </article>
+
+        <article class="service-card">
+          <span class="service-number">03</span>
+          <h3>Lectura desde Excel</h3>
+          <p>La web toma la base desde Google Sheets con columnas para datos tecnicos y hasta 15 fotos por auto.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <div class="selection-overlay" id="selectionOverlay"></div>
+  <aside class="selection-panel" id="selectionPanel" aria-hidden="true">
+    <div class="panel-header">
+      <div>
+        <p class="panel-eyebrow">Consulta comercial</p>
+        <h3>Tu seleccion</h3>
+      </div>
+      <button class="panel-close" id="selectionClose" type="button" aria-label="Cerrar seleccion">&times;</button>
+    </div>
+
+    <div class="selection-items" id="selectionItems">
+      <p class="selection-empty">Todavia no agregaste ninguna unidad.</p>
+    </div>
+
+    <div class="panel-footer" id="selectionFooter" hidden>
+      <div class="panel-summary">
+        <span>Unidades elegidas</span>
+        <strong id="selectionSummaryCount">0</strong>
+      </div>
+
+      <div class="lead-fields">
+        <input type="text" id="clientName" placeholder="Nombre y apellido">
+        <input type="text" id="clientPhone" placeholder="Telefono">
+        <textarea id="clientNotes" rows="4" placeholder="Ej: tomo usado, necesito financiacion, quiero coordinar visita"></textarea>
+      </div>
+
+      <button class="whatsapp-btn" id="sendSelectionBtn" type="button">Enviar consulta por WhatsApp</button>
     </div>
   </aside>
 
-  <footer class="footer">
-    <div class="footer-inner">
-      <p class="footer-logo">V<span>1</span>NITO</p>
-      <p class="footer-text">Beb&eacute; con moderaci&oacute;n. Prohibida la venta a menores de 18 a&ntilde;os.</p>
+  <div class="modal-overlay" id="modalOverlay"></div>
+  <section class="vehicle-modal" id="vehicleModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" id="modalClose" type="button" aria-label="Cerrar ficha">&times;</button>
+
+    <div class="modal-layout">
+      <div class="modal-gallery">
+        <div class="modal-main-media" id="modalMainMedia">
+          <div class="image-placeholder modal-placeholder">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M11 38l4-12a6 6 0 0 1 5.7-4.1h22.7a6 6 0 0 1 5.7 4.1L53 38h3a3 3 0 0 1 3 3v4a3 3 0 0 1-3 3h-2a5 5 0 0 1-10 0H20a5 5 0 0 1-10 0H8a3 3 0 0 1-3-3v-4a3 3 0 0 1 3-3h3zm10.6-10a2 2 0 0 0-1.9 1.3L17 38h30l-2.7-8.7a2 2 0 0 0-1.9-1.3zM15 48a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm34 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="modal-thumbs" id="modalThumbs"></div>
+      </div>
+
+      <div class="modal-content">
+        <p class="modal-type" id="modalType">Auto</p>
+        <h3 id="modalTitle">Cargando ficha...</h3>
+        <p class="modal-version" id="modalVersion">Version</p>
+        <div class="modal-price" id="modalPrice">--</div>
+
+        <div class="modal-spec-grid" id="modalSpecGrid"></div>
+
+        <div class="modal-actions">
+          <button class="modal-secondary-btn" id="modalSelectionBtn" type="button">Guardar en seleccion</button>
+          <button class="modal-primary-btn" id="modalWhatsappBtn" type="button">Consultar por WhatsApp</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer" id="contacto">
+    <div class="footer-shell">
+      <div>
+        <p class="footer-brand">FF Motors</p>
+        <p class="footer-copy">Catalogo digital para mostrar stock automotor con lectura desde Google Sheets y cierre comercial por WhatsApp.</p>
+      </div>
+
+      <div class="footer-links">
+        <a href="#catalogo">Ver stock</a>
+        <a href="#servicios">Servicios</a>
+        <a id="footerWhatsappLink" href="#" target="_blank" rel="noreferrer">Escribir por WhatsApp</a>
+      </div>
     </div>
   </footer>
 

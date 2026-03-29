@@ -1,49 +1,76 @@
 // =============================================
-// Carrito de compras
+// Lista de seleccion para consultas
 // =============================================
 
-class Cart {
+class SelectionStore {
   constructor() {
-    this.items = JSON.parse(localStorage.getItem('v1nito_cart') || '[]');
+    this.storageKey = 'ffmotors_selection';
+    this.items = this.load();
+  }
+
+  load() {
+    try {
+      const raw = localStorage.getItem(this.storageKey);
+      return raw ? JSON.parse(raw) : [];
+    } catch (error) {
+      console.warn('No se pudo leer la seleccion guardada:', error);
+      return [];
+    }
   }
 
   save() {
-    localStorage.setItem('v1nito_cart', JSON.stringify(this.items));
+    localStorage.setItem(this.storageKey, JSON.stringify(this.items));
   }
 
-  add(wine) {
-    const existing = this.items.find(item => item.id === wine.id);
-    if (existing) {
-      existing.qty++;
-    } else {
-      this.items.push({ ...wine, qty: 1 });
+  add(vehicle) {
+    if (!vehicle || this.has(vehicle.id)) {
+      return false;
     }
+
+    this.items.push({
+      id: vehicle.id,
+      marca: vehicle.marca,
+      modelo: vehicle.modelo,
+      version: vehicle.version,
+      year: vehicle.year,
+      km: vehicle.km,
+      precio: vehicle.precio,
+      coverPhoto: vehicle.coverPhoto,
+      tipo: vehicle.tipo,
+    });
+
     this.save();
+    return true;
   }
 
-  remove(wineId) {
-    this.items = this.items.filter(item => item.id !== wineId);
-    this.save();
-  }
+  remove(vehicleId) {
+    const before = this.items.length;
+    this.items = this.items.filter(item => item.id !== vehicleId);
 
-  updateQty(wineId, delta) {
-    const item = this.items.find(item => item.id === wineId);
-    if (!item) return;
-
-    item.qty += delta;
-    if (item.qty <= 0) {
-      this.remove(wineId);
-    } else {
+    if (this.items.length !== before) {
       this.save();
+      return true;
     }
+
+    return false;
   }
 
-  getTotal() {
-    return this.items.reduce((sum, item) => sum + item.precio * item.qty, 0);
+  toggle(vehicle) {
+    if (this.has(vehicle.id)) {
+      this.remove(vehicle.id);
+      return false;
+    }
+
+    this.add(vehicle);
+    return true;
   }
 
-  getCount() {
-    return this.items.reduce((sum, item) => sum + item.qty, 0);
+  has(vehicleId) {
+    return this.items.some(item => item.id === vehicleId);
+  }
+
+  count() {
+    return this.items.length;
   }
 
   clear() {
@@ -51,18 +78,31 @@ class Cart {
     this.save();
   }
 
-  buildWhatsAppMessage(name, address) {
-    let msg = `🍷 *Nuevo pedido V1NITO*\n\n`;
-    msg += `👤 *Nombre:* ${name}\n`;
-    msg += `📍 *Dirección:* ${address}\n\n`;
-    msg += `📋 *Detalle del pedido:*\n`;
+  buildWhatsAppMessage({ name, phone, notes }) {
+    const lines = [
+      'Hola FF Motors, quiero consultar por estas unidades:',
+      '',
+      `Nombre: ${name}`,
+      `Telefono: ${phone}`,
+    ];
 
-    this.items.forEach(item => {
-      msg += `• ${item.nombre} x${item.qty} — ${CONFIG.CURRENCY}${(item.precio * item.qty).toLocaleString('es-AR')}\n`;
+    if (notes) {
+      lines.push(`Comentarios: ${notes}`);
+    }
+
+    lines.push('', 'Unidades seleccionadas:');
+
+    this.items.forEach((item, index) => {
+      const detail = [
+        `${index + 1}. ${item.marca} ${item.modelo} ${item.version}`.trim(),
+        item.year ? `Ano ${item.year}` : null,
+        item.km ? `${item.km.toLocaleString('es-AR')} km` : null,
+        item.precio ? `${CONFIG.CURRENCY}${item.precio.toLocaleString('es-AR')}` : 'Precio a consultar',
+      ].filter(Boolean).join(' | ');
+
+      lines.push(detail);
     });
 
-    msg += `\n💰 *Total: ${CONFIG.CURRENCY}${this.getTotal().toLocaleString('es-AR')}*`;
-
-    return msg;
+    return lines.join('\n');
   }
 }

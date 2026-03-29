@@ -1,102 +1,228 @@
 // =============================================
-// Google Sheets Reader (JSONP — sin CORS)
+// Google Sheets Reader (JSONP - sin CORS)
 // =============================================
 
-/**
- * Lee una Google Sheet publicada usando la Google Visualization API
- * via inyeccion de <script> (JSONP). Esto evita CORS completamente,
- * funciona incluso abriendo el HTML desde file://.
- *
- * La hoja DEBE estar publicada en la web:
- *   Archivo → Compartir → Publicar en la web
- *
+/*
  * Columnas esperadas:
- *   nombre | descripcion | photo_url | precio | tiene_stock | categoria
+ * tipo | marca | modelo | version | ano | km | color | combustible |
+ * transmision | precio | foto1 ... foto15
  */
 
-function fetchWinesFromSheet() {
-  return new Promise((resolve, reject) => {
-    // Nombre unico para el callback
-    const callbackName = '_sheetCallback_' + Date.now();
+async function fetchVehiclesFromSheet() {
+  const candidateSheets = buildSheetCandidates();
+  let lastError = null;
 
-    // Timeout por si falla
+  for (const sheetName of candidateSheets) {
+    try {
+      return await fetchSheetByName(sheetName);
+    } catch (error) {
+      lastError = error;
+      console.warn(`No se pudo leer la hoja "${sheetName}":`, error.message);
+    }
+  }
+
+  throw lastError || new Error('No se pudo leer Google Sheets');
+}
+
+function buildSheetCandidates() {
+  const candidates = [
+    CONFIG.SHEET_NAME,
+    'catalogo_autos',
+    'catalogo_vinos',
+    'Sheet1',
+    'Hoja 1',
+  ];
+
+  return [...new Set(candidates.filter(Boolean))];
+}
+
+function fetchSheetByName(sheetName) {
+  return new Promise((resolve, reject) => {
+    const callbackName = `_sheetCallback_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+    const scriptId = `sheet-loader-${callbackName}`;
+
     const timeout = setTimeout(() => {
       cleanup();
-      reject(new Error('Timeout cargando datos de Google Sheets'));
+      reject(new Error(`Timeout cargando la hoja ${sheetName}`));
     }, 10000);
 
     function cleanup() {
       clearTimeout(timeout);
       delete window[callbackName];
-      const script = document.getElementById('sheet-loader');
+      const script = document.getElementById(scriptId);
       if (script) script.remove();
     }
 
-    // Callback global que Google va a invocar
     window[callbackName] = function (response) {
       cleanup();
 
-      console.log('Google Sheets response:', JSON.stringify(response, null, 2));
+      if (!response || response.status === 'error') {
+        reject(new Error(response?.errors?.[0]?.detailed_message || `Respuesta invalida para ${sheetName}`));
+        return;
+      }
 
-      if (!response || !response.table) {
-        reject(new Error('Respuesta invalida de Google Sheets'));
+      if (!response.table) {
+        reject(new Error(`La hoja ${sheetName} no devolvio tabla`));
         return;
       }
 
       try {
-        const wines = parseGvizTable(response.table);
-        resolve(wines);
-      } catch (err) {
-        reject(err);
+        resolve(parseGvizTable(response.table));
+      } catch (error) {
+        reject(error);
       }
     };
 
-    // Inyectar <script> con la URL de Google Visualization API
     const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq`
       + `?tqx=out:json;responseHandler:${callbackName}`
-      + `&sheet=${encodeURIComponent(CONFIG.SHEET_NAME)}`;
+      + `&sheet=${encodeURIComponent(sheetName)}`;
 
     const script = document.createElement('script');
-    script.id = 'sheet-loader';
+    script.id = scriptId;
     script.src = url;
     script.onerror = () => {
       cleanup();
-      reject(new Error('No se pudo cargar el script de Google Sheets'));
+      reject(new Error(`No se pudo cargar el script para ${sheetName}`));
     };
     document.head.appendChild(script);
   });
 }
 
 function parseGvizTable(table) {
-  // Extraer nombres de columnas
-  const headers = table.cols.map(col =>
-    (col.label || '').toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-  );
+  const headers = table.cols.map(col => normalizeHeader(col.label || col.id || ''));
+  const vehicles = [];
 
-  const wines = [];
-
-  for (let i = 0; i < table.rows.length; i++) {
-    const cells = table.rows[i].c;
+  for (let index = 0; index < table.rows.length; index++) {
+    const cells = table.rows[index].c || [];
     const row = {};
 
-    headers.forEach((header, idx) => {
-      const cell = cells[idx];
-      row[header] = cell ? (cell.v != null ? String(cell.v) : '') : '';
+    headers.forEach((header, headerIndex) => {
+      row[header] = getCellValue(cells[headerIndex]);
     });
 
-    // Saltear filas vacias
-    if (!row['nombre'] || !row['nombre'].trim()) return;
+    if (!hasVehicleIdentity(row)) {
+      continue;
+    }
 
-    wines.push({
-      id: i + 1,
-      nombre: (row['nombre'] || 'Sin nombre').trim(),
-      descripcion: (row['descripcion'] || '').trim(),
-      photo_url: (row['photo_url'] || '').trim(),
-      precio: parseFloat(row['precio']) || 0,
-      tiene_stock: (row['tiene_stock'] || '').toUpperCase().trim() === 'SI',
-      categoria: (row['categoria'] || 'Otros').trim(),
+    const photos = collectPhotos(row);
+    const marca = cleanText(row.marca) || 'Marca';
+    const modelo = cleanText(row.modelo) || 'Modelo';
+    const version = cleanText(row.version) || 'Version no especificada';
+    const tipo = cleanText(row.tipo) || 'Auto';
+    const year = parseInteger(row.ano);
+    const km = parseInteger(row.km);
+    const precio = parseInteger(row.precio);
+
+    vehicles.push({
+      id: index + 1,
+      tipo,
+      marca,
+      modelo,
+      version,
+      year,
+      km,
+      color: cleanText(row.color) || 'No informado',
+      combustible: cleanText(row.combustible) || 'No informado',
+      transmision: cleanText(row.transmision) || 'No informado',
+      precio,
+      photos,
+      coverPhoto: photos[0] || '',
+      title: `${marca} ${modelo}`.trim(),
+      searchBlob: [
+        tipo,
+        marca,
+        modelo,
+        version,
+        year ? String(year) : '',
+        km ? String(km) : '',
+        cleanText(row.color),
+        cleanText(row.combustible),
+        cleanText(row.transmision),
+      ].join(' ').toLowerCase(),
     });
   }
 
-  return wines;
+  return vehicles;
+}
+
+function normalizeHeader(value) {
+  return String(value)
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, '');
+}
+
+function getCellValue(cell) {
+  if (!cell || cell.v == null) {
+    return '';
+  }
+
+  return String(cell.v).trim();
+}
+
+function hasVehicleIdentity(row) {
+  return cleanText(row.marca) || cleanText(row.modelo) || cleanText(row.version);
+}
+
+function collectPhotos(row) {
+  const photos = [];
+
+  for (let photoIndex = 1; photoIndex <= 15; photoIndex++) {
+    const key = `foto${photoIndex}`;
+    const rawValue = cleanText(row[key]);
+
+    if (!rawValue) {
+      continue;
+    }
+
+    splitPhotoField(rawValue).forEach(photo => {
+      const normalized = normalizePhotoUrl(photo);
+      if (normalized && !photos.includes(normalized)) {
+        photos.push(normalized);
+      }
+    });
+  }
+
+  return photos;
+}
+
+function splitPhotoField(value) {
+  if (!value) {
+    return [];
+  }
+
+  return value
+    .split(/\n|,|;/)
+    .map(item => item.trim())
+    .filter(Boolean);
+}
+
+function normalizePhotoUrl(url) {
+  const trimmed = cleanText(url);
+  if (!trimmed) {
+    return '';
+  }
+
+  const fileMatch = trimmed.match(/drive\.google\.com\/file\/d\/([^/]+)/i);
+  if (fileMatch) {
+    return `https://drive.google.com/thumbnail?id=${fileMatch[1]}&sz=w1600`;
+  }
+
+  const openMatch = trimmed.match(/[?&]id=([^&]+)/i);
+  if (/drive\.google\.com/i.test(trimmed) && openMatch) {
+    return `https://drive.google.com/thumbnail?id=${openMatch[1]}&sz=w1600`;
+  }
+
+  return trimmed;
+}
+
+function cleanText(value) {
+  return String(value || '').trim();
+}
+
+function parseInteger(value) {
+  const digits = String(value || '').replace(/[^\d]/g, '');
+  return digits ? Number(digits) : 0;
 }

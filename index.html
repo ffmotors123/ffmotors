@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V1NITO - Vinos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manjari:wght@100;400;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-inner">
+      <a href="#" class="logo">
+        <span class="logo-v">V</span><span class="logo-1">1</span><span class="logo-nito">NITO</span>
+      </a>
+      <nav class="nav">
+        <a href="#catalogo" class="nav-link">Cat&aacute;logo</a>
+        <button class="cart-btn" id="cartBtn" aria-label="Abrir carrito">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-grain"></div>
+    <div class="hero-content">
+      <p class="hero-kicker">Selecci&oacute;n curada y entregas en C&oacute;rdoba</p>
+      <h1 class="hero-title">Siempre es hora de un vinito</h1>
+      <p class="hero-sub">Una selecci&oacute;n con onda para abrir algo rico, brindar y convertir cualquier noche en plan.</p>
+      <div class="hero-actions">
+        <a href="#catalogo" class="hero-cta">Ver cat&aacute;logo</a>
+        <p class="hero-note">Pedidos por DM o WhatsApp</p>
+      </div>
+    </div>
+
+    <div class="hero-scene" aria-hidden="true">
+      <div class="collage-card">
+        <span class="collage-piece disco disco-main"></span>
+        <span class="collage-piece disco disco-mini"></span>
+        <span class="collage-piece pour-hand"></span>
+        <span class="collage-piece pour-stream"></span>
+        <span class="collage-piece central-bottle"></span>
+        <span class="collage-piece can-hand"></span>
+        <span class="collage-piece red-glove"></span>
+        <span class="collage-piece citrus-drink"></span>
+        <span class="collage-piece martini"></span>
+        <span class="collage-piece wine-hand"></span>
+        <span class="collage-piece lips"></span>
+        <span class="collage-piece profile-face"></span>
+        <span class="collage-piece sparkle sparkle-1"></span>
+        <span class="collage-piece sparkle sparkle-2"></span>
+      </div>
+    </div>
+
+    <p class="hero-footer">Env&iacute;os por C&oacute;rdoba &middot; pedidos por DM</p>
+  </section>
+
+  <section class="intro-strip">
+    <p class="intro-strip-text">
+      Vinos ricos, lindas etiquetas y una est&eacute;tica de sobremesa larga. Elegimos botellas para compartir, regalar o abrir sin esperar una ocasi&oacute;n especial.
+    </p>
+  </section>
+
+  <section id="catalogo" class="catalogo">
+    <div class="section-header">
+      <h2 class="section-title">Nuestros vinos</h2>
+      <div class="filters" id="filters"></div>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>Cargando vinos...</p>
+    </div>
+
+    <div class="error-msg" id="errorMsg" style="display:none">
+      <p>No se pudieron cargar los vinos. Verific&aacute; la configuraci&oacute;n de Google Sheets.</p>
+      <button onclick="loadWines()" class="retry-btn">Reintentar</button>
+    </div>
+
+    <div class="wines-grid" id="winesGrid"></div>
+  </section>
+
+  <div class="cart-overlay" id="cartOverlay"></div>
+  <aside class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+      <h3>Tu pedido</h3>
+      <button class="cart-close" id="cartClose" aria-label="Cerrar carrito">&times;</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <p class="cart-empty">Tu carrito est&aacute; vac&iacute;o</p>
+    </div>
+    <div class="cart-footer" id="cartFooter" style="display:none">
+      <div class="cart-total">
+        <span>Total:</span>
+        <span id="cartTotal">$0</span>
+      </div>
+      <div class="checkout-fields">
+        <input type="text" id="clientName" placeholder="Tu nombre" required>
+        <input type="text" id="clientAddress" placeholder="Direcci&oacute;n de entrega" required>
+      </div>
+      <button class="checkout-btn" id="checkoutBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"></path>
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 0 0 .612.638l4.685-1.228A11.953 11.953 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.137 0-4.146-.587-5.863-1.606l-.335-.203-2.783.73.662-2.645-.222-.352A9.935 9.935 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"></path>
+        </svg>
+        Enviar pedido por WhatsApp
+      </button>
+    </div>
+  </aside>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p class="footer-logo">V<span>1</span>NITO</p>
+      <p class="footer-text">Beb&eacute; con moderaci&oacute;n. Prohibida la venta a menores de 18 a&ntilde;os.</p>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/sheets.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

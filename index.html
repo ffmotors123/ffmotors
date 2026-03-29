@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FF Motors | Venta de Autos</title>
+  <link rel="icon" type="image/png" href="img/Logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,11 +15,7 @@
   <header class="site-header">
     <div class="header-shell">
       <a href="#inicio" class="logo">
-        <span class="logo-mark">FF</span>
-        <span class="logo-copy">
-          <strong>Motors</strong>
-          <small>Stock real de autos</small>
-        </span>
+        <img class="logo-image" src="img/Logo.png" alt="FF Motors">
       </a>
 
       <nav class="main-nav">
@@ -31,10 +28,6 @@
         <a class="header-whatsapp" id="headerWhatsappLink" href="#" target="_blank" rel="noreferrer">
           WhatsApp
         </a>
-        <button class="selection-btn" id="selectionBtn" type="button" aria-label="Abrir seleccion">
-          <span>Seleccion</span>
-          <span class="selection-count" id="selectionCount">0</span>
-        </button>
       </div>
     </div>
   </header>
@@ -125,7 +118,7 @@
       </article>
       <article>
         <strong>Contacto comercial</strong>
-        <p>Guarda varias unidades y envia una sola consulta con tus datos al asesor.</p>
+        <p>Cada unidad permite iniciar una consulta directa por WhatsApp con el asesor.</p>
       </article>
     </section>
 
@@ -209,7 +202,7 @@
         <article class="service-card">
           <span class="service-number">02</span>
           <h3>Consulta guiada</h3>
-          <p>El usuario puede guardar unidades y mandar un mensaje armado con nombre, telefono e interes.</p>
+          <p>El usuario puede abrir cada ficha y contactar por WhatsApp con un mensaje listo para enviar.</p>
         </article>
 
         <article class="service-card">
@@ -220,36 +213,6 @@
       </div>
     </section>
   </main>
-
-  <div class="selection-overlay" id="selectionOverlay"></div>
-  <aside class="selection-panel" id="selectionPanel" aria-hidden="true">
-    <div class="panel-header">
-      <div>
-        <p class="panel-eyebrow">Consulta comercial</p>
-        <h3>Tu seleccion</h3>
-      </div>
-      <button class="panel-close" id="selectionClose" type="button" aria-label="Cerrar seleccion">&times;</button>
-    </div>
-
-    <div class="selection-items" id="selectionItems">
-      <p class="selection-empty">Todavia no agregaste ninguna unidad.</p>
-    </div>
-
-    <div class="panel-footer" id="selectionFooter" hidden>
-      <div class="panel-summary">
-        <span>Unidades elegidas</span>
-        <strong id="selectionSummaryCount">0</strong>
-      </div>
-
-      <div class="lead-fields">
-        <input type="text" id="clientName" placeholder="Nombre y apellido">
-        <input type="text" id="clientPhone" placeholder="Telefono">
-        <textarea id="clientNotes" rows="4" placeholder="Ej: tomo usado, necesito financiacion, quiero coordinar visita"></textarea>
-      </div>
-
-      <button class="whatsapp-btn" id="sendSelectionBtn" type="button">Enviar consulta por WhatsApp</button>
-    </div>
-  </aside>
 
   <div class="modal-overlay" id="modalOverlay"></div>
   <section class="vehicle-modal" id="vehicleModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -276,7 +239,6 @@
         <div class="modal-spec-grid" id="modalSpecGrid"></div>
 
         <div class="modal-actions">
-          <button class="modal-secondary-btn" id="modalSelectionBtn" type="button">Guardar en seleccion</button>
           <button class="modal-primary-btn" id="modalWhatsappBtn" type="button">Consultar por WhatsApp</button>
         </div>
       </div>
@@ -300,7 +262,6 @@
 
   <script src="js/config.js"></script>
   <script src="js/sheets.js"></script>
-  <script src="js/cart.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

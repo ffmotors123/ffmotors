@@ -2,8 +2,6 @@
 // App principal FF Motors
 // =============================================
 
-const selectionStore = new SelectionStore();
-
 let allVehicles = [];
 let activeType = 'Todos';
 let activeBrand = 'Todas';
@@ -24,19 +22,6 @@ const resultsSummary = document.getElementById('resultsSummary');
 const searchInput = document.getElementById('searchInput');
 const sortSelect = document.getElementById('sortSelect');
 
-const selectionBtn = document.getElementById('selectionBtn');
-const selectionCount = document.getElementById('selectionCount');
-const selectionPanel = document.getElementById('selectionPanel');
-const selectionOverlay = document.getElementById('selectionOverlay');
-const selectionClose = document.getElementById('selectionClose');
-const selectionItems = document.getElementById('selectionItems');
-const selectionFooter = document.getElementById('selectionFooter');
-const selectionSummaryCount = document.getElementById('selectionSummaryCount');
-const sendSelectionBtn = document.getElementById('sendSelectionBtn');
-const clientNameInput = document.getElementById('clientName');
-const clientPhoneInput = document.getElementById('clientPhone');
-const clientNotesInput = document.getElementById('clientNotes');
-
 const modalOverlay = document.getElementById('modalOverlay');
 const vehicleModal = document.getElementById('vehicleModal');
 const modalClose = document.getElementById('modalClose');
@@ -47,7 +32,6 @@ const modalTitleText = document.getElementById('modalTitle');
 const modalVersion = document.getElementById('modalVersion');
 const modalPrice = document.getElementById('modalPrice');
 const modalSpecGrid = document.getElementById('modalSpecGrid');
-const modalSelectionBtn = document.getElementById('modalSelectionBtn');
 const modalWhatsappBtn = document.getElementById('modalWhatsappBtn');
 
 const featuredTitle = document.getElementById('featuredTitle');
@@ -65,8 +49,6 @@ const footerWhatsappLink = document.getElementById('footerWhatsappLink');
 document.addEventListener('DOMContentLoaded', () => {
   bindUI();
   syncContactLinks();
-  renderSelectionBadge();
-  renderSelectionPanel();
   loadVehicles();
 });
 
@@ -99,11 +81,6 @@ function bindUI() {
   });
 
   vehiclesGrid.addEventListener('click', handleVehicleGridClick);
-  selectionBtn.addEventListener('click', openSelectionPanel);
-  selectionClose.addEventListener('click', closeSelectionPanel);
-  selectionOverlay.addEventListener('click', closeSelectionPanel);
-  selectionItems.addEventListener('click', handleSelectionClick);
-  sendSelectionBtn.addEventListener('click', sendSelectionInquiry);
 
   featuredActionBtn.addEventListener('click', () => {
     if (featuredVehicleId) {
@@ -114,13 +91,11 @@ function bindUI() {
   modalClose.addEventListener('click', closeVehicleModal);
   modalOverlay.addEventListener('click', closeVehicleModal);
   modalThumbs.addEventListener('click', handleThumbClick);
-  modalSelectionBtn.addEventListener('click', toggleCurrentVehicleSelection);
   modalWhatsappBtn.addEventListener('click', sendCurrentVehicleInquiry);
 
   document.addEventListener('keydown', event => {
     if (event.key !== 'Escape') return;
     closeVehicleModal();
-    closeSelectionPanel();
   });
 }
 
@@ -284,8 +259,6 @@ function numericSort(firstValue, secondValue, desc = false) {
 }
 
 function renderVehicleCard(vehicle) {
-  const isSelected = selectionStore.has(vehicle.id);
-
   return `
     <article class="vehicle-card">
       <div class="vehicle-media">
@@ -331,15 +304,6 @@ function renderVehicleCard(vehicle) {
           <div class="vehicle-actions">
             <button
               type="button"
-              class="card-secondary-btn"
-              data-action="toggle-selection"
-              data-id="${vehicle.id}"
-            >
-              ${isSelected ? 'Guardado' : 'Guardar'}
-            </button>
-
-            <button
-              type="button"
               class="card-btn"
               data-action="open-modal"
               data-id="${vehicle.id}"
@@ -377,130 +341,13 @@ function handleVehicleGridClick(event) {
 
   if (button.dataset.action === 'open-modal') {
     openVehicleModal(vehicleId);
-    return;
   }
-
-  if (button.dataset.action === 'toggle-selection') {
-    const wasAdded = selectionStore.toggle(vehicle);
-    renderSelectionBadge();
-    renderSelectionPanel();
-    renderVehicles();
-    showToast(wasAdded ? 'Unidad agregada a la seleccion' : 'Unidad removida de la seleccion');
-  }
-}
-
-function openSelectionPanel() {
-  closeVehicleModal();
-  renderSelectionPanel();
-  selectionPanel.classList.add('open');
-  selectionOverlay.classList.add('open');
-  selectionPanel.setAttribute('aria-hidden', 'false');
-  document.body.classList.add('panel-open');
-}
-
-function closeSelectionPanel() {
-  selectionPanel.classList.remove('open');
-  selectionOverlay.classList.remove('open');
-  selectionPanel.setAttribute('aria-hidden', 'true');
-  document.body.classList.remove('panel-open');
-}
-
-function renderSelectionBadge() {
-  selectionCount.textContent = selectionStore.count().toString();
-}
-
-function renderSelectionPanel() {
-  if (!selectionStore.count()) {
-    selectionItems.innerHTML = '<p class="selection-empty">Todavia no agregaste ninguna unidad.</p>';
-    selectionFooter.hidden = true;
-    selectionSummaryCount.textContent = '0';
-    return;
-  }
-
-  selectionItems.innerHTML = selectionStore.items.map(item => `
-    <article class="selection-item">
-      <div class="selection-item-media">
-        ${getMiniImageMarkup(item.coverPhoto, `${item.marca} ${item.modelo}`)}
-      </div>
-
-      <div>
-        <h4 class="selection-item-title">${escapeHTML(`${item.marca} ${item.modelo}`)}</h4>
-        <p class="selection-item-subtitle">${escapeHTML(item.version || 'Version no especificada')}</p>
-        <p class="selection-item-subtitle">${escapeHTML(buildShortMeta(item))}</p>
-        <p class="selection-item-price">${formatPrice(item.precio)}</p>
-      </div>
-
-      <button
-        type="button"
-        class="selection-remove"
-        aria-label="Quitar unidad"
-        data-remove-id="${item.id}"
-      >
-        &times;
-      </button>
-    </article>
-  `).join('');
-
-  selectionFooter.hidden = false;
-  selectionSummaryCount.textContent = selectionStore.count().toString();
-}
-
-function handleSelectionClick(event) {
-  const button = event.target.closest('[data-remove-id]');
-  if (!button) return;
-
-  const vehicleId = Number(button.dataset.removeId);
-  selectionStore.remove(vehicleId);
-  renderSelectionBadge();
-  renderSelectionPanel();
-  renderVehicles();
-
-  if (currentVehicleId === vehicleId) {
-    renderCurrentModalState();
-  }
-}
-
-function sendSelectionInquiry() {
-  if (!selectionStore.count()) {
-    showToast('Agrega al menos una unidad a la seleccion');
-    return;
-  }
-
-  const name = clientNameInput.value.trim();
-  const phone = clientPhoneInput.value.trim();
-  const notes = clientNotesInput.value.trim();
-
-  if (!name) {
-    showToast('Ingresa tu nombre');
-    clientNameInput.focus();
-    return;
-  }
-
-  if (!phone) {
-    showToast('Ingresa tu telefono');
-    clientPhoneInput.focus();
-    return;
-  }
-
-  const message = selectionStore.buildWhatsAppMessage({ name, phone, notes });
-  openWhatsApp(message);
-
-  selectionStore.clear();
-  renderSelectionBadge();
-  renderSelectionPanel();
-  renderVehicles();
-  closeSelectionPanel();
-  clientNameInput.value = '';
-  clientPhoneInput.value = '';
-  clientNotesInput.value = '';
-  showToast('Consulta enviada por WhatsApp');
 }
 
 function openVehicleModal(vehicleId) {
   const vehicle = findVehicle(vehicleId);
   if (!vehicle) return;
 
-  closeSelectionPanel();
   currentVehicleId = vehicleId;
   currentPhotoIndex = 0;
   renderVehicleModal(vehicle);
@@ -548,8 +395,6 @@ function renderVehicleModal(vehicle) {
     buildSpecCard('Combustible', vehicle.combustible),
     buildSpecCard('Transmision', vehicle.transmision),
   ].join('');
-
-  renderCurrentModalState();
 }
 
 function handleThumbClick(event) {
@@ -563,31 +408,11 @@ function handleThumbClick(event) {
   }
 }
 
-function toggleCurrentVehicleSelection() {
-  const vehicle = findVehicle(currentVehicleId);
-  if (!vehicle) return;
-
-  const wasAdded = selectionStore.toggle(vehicle);
-  renderSelectionBadge();
-  renderSelectionPanel();
-  renderVehicles();
-  renderCurrentModalState();
-  showToast(wasAdded ? 'Unidad agregada a la seleccion' : 'Unidad removida de la seleccion');
-}
-
 function sendCurrentVehicleInquiry() {
   const vehicle = findVehicle(currentVehicleId);
   if (!vehicle) return;
 
   openWhatsApp(buildSingleVehicleMessage(vehicle));
-}
-
-function renderCurrentModalState() {
-  const vehicle = findVehicle(currentVehicleId);
-  if (!vehicle) return;
-
-  const isSelected = selectionStore.has(vehicle.id);
-  modalSelectionBtn.textContent = isSelected ? 'Quitar de seleccion' : 'Guardar en seleccion';
 }
 
 function buildSingleVehicleMessage(vehicle) {
@@ -609,13 +434,6 @@ function buildVehicleSummary(vehicle) {
     vehicle.combustible,
     vehicle.transmision,
     vehicle.color,
-  ].filter(Boolean).join(' | ');
-}
-
-function buildShortMeta(vehicle) {
-  return [
-    formatYear(vehicle.year),
-    formatKm(vehicle.km),
   ].filter(Boolean).join(' | ');
 }
 

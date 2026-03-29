@@ -120,42 +120,19 @@ img {
 .logo {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 62px;
+  height: 62px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
 }
 
-.logo-mark {
-  display: grid;
-  place-items: center;
-  width: 52px;
-  height: 52px;
-  border-radius: 18px;
-  background:
-    linear-gradient(145deg, rgba(51, 167, 255, 0.92), rgba(10, 33, 60, 0.6)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent);
-  color: #fff;
-  font-family: 'Bebas Neue', cursive;
-  font-size: 2rem;
-  letter-spacing: 0.08em;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 14px 26px rgba(7, 18, 33, 0.28);
-}
-
-.logo-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.logo-copy strong {
-  font-size: 1.15rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.logo-copy small {
-  color: var(--text-soft);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-size: 0.7rem;
+.logo-image {
+  width: auto;
+  height: 48px;
+  object-fit: contain;
 }
 
 .main-nav {
@@ -1461,8 +1438,8 @@ img {
     display: none;
   }
 
-  .selection-btn {
-    padding: 10px 14px;
+  .logo-image {
+    height: 40px;
   }
 
   .hero {

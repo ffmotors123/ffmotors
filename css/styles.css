@@ -422,6 +422,11 @@ img {
   transition: transform 220ms ease, transform-origin 120ms ease;
 }
 
+.modal-main-media img {
+  object-fit: contain;
+  object-position: center center;
+}
+
 .featured-media img {
   object-position: center var(--cover-position-y, 64%);
 }
@@ -1401,6 +1406,8 @@ img {
 
   .modal-layout {
     grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
   }
 
   .vehicle-modal {
@@ -1540,6 +1547,8 @@ img {
 
   .modal-layout {
     height: 94vh;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
   }
 
   .modal-main-media {

@@ -29,7 +29,6 @@ const modalMainMedia = document.getElementById('modalMainMedia');
 const modalThumbs = document.getElementById('modalThumbs');
 const modalType = document.getElementById('modalType');
 const modalTitleText = document.getElementById('modalTitle');
-const modalVersion = document.getElementById('modalVersion');
 const modalPrice = document.getElementById('modalPrice');
 const modalSpecGrid = document.getElementById('modalSpecGrid');
 const modalWhatsappBtn = document.getElementById('modalWhatsappBtn');
@@ -363,8 +362,8 @@ function renderVehicleModal(vehicle) {
 
   modalType.textContent = vehicle.tipo;
   modalTitleText.textContent = vehicleHeading(vehicle);
-  modalVersion.textContent = vehicle.version;
   modalPrice.textContent = formatPrice(vehicle.precio);
+  modalMainMedia.style.setProperty('--modal-cover-position-y', getVehicleCoverPosition(vehicle, 'modal'));
   modalMainMedia.innerHTML = getMainImageMarkup(currentPhoto, vehicleHeading(vehicle));
   resetModalImageZoom();
 
@@ -380,8 +379,6 @@ function renderVehicleModal(vehicle) {
   `).join('');
 
   modalSpecGrid.innerHTML = [
-    buildSpecCard('Marca', vehicle.marca),
-    buildSpecCard('Modelo', vehicle.modelo),
     buildSpecCard('Version', vehicle.version),
     buildSpecCard('Año', formatYear(vehicle.year)),
     buildSpecCard('Kilometraje', formatKm(vehicle.km)),
@@ -509,6 +506,14 @@ function getVehicleCoverPosition(vehicle, context = 'card') {
     };
 
     return featuredPositions[key] || '64%';
+  }
+
+  if (context === 'modal') {
+    const modalPositions = {
+      'fiat strada': '74%',
+    };
+
+    return modalPositions[key] || '50%';
   }
 
   const cardPositions = {

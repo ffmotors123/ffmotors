@@ -40,8 +40,6 @@ const featuredPrice = document.getElementById('featuredPrice');
 const featuredMedia = document.getElementById('featuredMedia');
 const featuredActionBtn = document.getElementById('featuredActionBtn');
 const heroCount = document.getElementById('heroCount');
-const heroBrands = document.getElementById('heroBrands');
-const heroAverageYear = document.getElementById('heroAverageYear');
 const featuredHighlights = document.getElementById('featuredHighlights');
 const headerWhatsappLink = document.getElementById('headerWhatsappLink');
 const footerWhatsappLink = document.getElementById('footerWhatsappLink');
@@ -91,6 +89,9 @@ function bindUI() {
   modalClose.addEventListener('click', closeVehicleModal);
   modalOverlay.addEventListener('click', closeVehicleModal);
   modalThumbs.addEventListener('click', handleThumbClick);
+  modalMainMedia.addEventListener('click', handleModalImageZoomToggle);
+  modalMainMedia.addEventListener('mousemove', handleModalImageZoomMove);
+  modalMainMedia.addEventListener('mouseleave', handleModalImageZoomLeave);
   modalWhatsappBtn.addEventListener('click', sendCurrentVehicleInquiry);
 
   document.addEventListener('keydown', event => {
@@ -150,15 +151,7 @@ function renderFilterButtons(container, options, activeValue) {
 }
 
 function renderHeroMetrics() {
-  const brandCount = new Set(allVehicles.map(vehicle => vehicle.marca)).size;
-  const vehiclesWithYear = allVehicles.filter(vehicle => vehicle.year > 0);
-  const averageYear = vehiclesWithYear.length
-    ? Math.round(vehiclesWithYear.reduce((sum, vehicle) => sum + vehicle.year, 0) / vehiclesWithYear.length)
-    : 0;
-
   heroCount.textContent = allVehicles.length.toString();
-  heroBrands.textContent = brandCount.toString();
-  heroAverageYear.textContent = averageYear || '--';
 
   const featured = getFeaturedVehicle();
   featuredVehicleId = featured ? featured.id : null;
@@ -176,6 +169,7 @@ function renderHeroMetrics() {
   featuredTitle.textContent = vehicleHeading(featured);
   featuredSpecs.textContent = buildVehicleSummary(featured);
   featuredPrice.textContent = formatPrice(featured.precio);
+  featuredMedia.style.setProperty('--cover-position-y', getVehicleCoverPosition(featured, 'featured'));
   featuredMedia.innerHTML = getMainImageMarkup(featured.coverPhoto, vehicleHeading(featured));
   featuredHighlights.innerHTML = [
     featured.tipo,
@@ -259,17 +253,18 @@ function numericSort(firstValue, secondValue, desc = false) {
 }
 
 function renderVehicleCard(vehicle) {
+  const coverPosition = getVehicleCoverPosition(vehicle, 'card');
+  const coverScale = getVehicleCoverScale(vehicle, 'card');
+
   return `
     <article class="vehicle-card">
-      <div class="vehicle-media">
+      <div class="vehicle-media" style="--cover-position-y: ${escapeAttr(coverPosition)}; --cover-scale: ${escapeAttr(coverScale)};">
         ${getMainImageMarkup(vehicle.coverPhoto, vehicleHeading(vehicle))}
-        <span class="vehicle-badge">${escapeHTML(vehicle.tipo)}</span>
         <span class="gallery-count">${vehicle.photos.length} fotos</span>
       </div>
 
       <div class="vehicle-body">
         <div class="vehicle-header">
-          <p class="vehicle-brand">${escapeHTML(vehicle.marca)}</p>
           <h3 class="vehicle-title">${escapeHTML(vehicleHeading(vehicle))}</h3>
           <p class="vehicle-version">${escapeHTML(vehicle.version)}</p>
         </div>
@@ -277,15 +272,12 @@ function renderVehicleCard(vehicle) {
         <div class="vehicle-spec-strip">
           <div class="vehicle-stat">
             <strong>${escapeHTML(formatYear(vehicle.year))}</strong>
-            <span>Ano</span>
           </div>
           <div class="vehicle-stat">
             <strong>${escapeHTML(formatKm(vehicle.km))}</strong>
-            <span>Kilometraje</span>
           </div>
           <div class="vehicle-stat">
             <strong>${escapeHTML(vehicle.color)}</strong>
-            <span>Color</span>
           </div>
         </div>
 
@@ -358,6 +350,7 @@ function openVehicleModal(vehicleId) {
 }
 
 function closeVehicleModal() {
+  resetModalImageZoom();
   vehicleModal.classList.remove('open');
   modalOverlay.classList.remove('open');
   vehicleModal.setAttribute('aria-hidden', 'true');
@@ -373,6 +366,7 @@ function renderVehicleModal(vehicle) {
   modalVersion.textContent = vehicle.version;
   modalPrice.textContent = formatPrice(vehicle.precio);
   modalMainMedia.innerHTML = getMainImageMarkup(currentPhoto, vehicleHeading(vehicle));
+  resetModalImageZoom();
 
   modalThumbs.innerHTML = photos.map((photo, index) => `
     <button
@@ -389,7 +383,7 @@ function renderVehicleModal(vehicle) {
     buildSpecCard('Marca', vehicle.marca),
     buildSpecCard('Modelo', vehicle.modelo),
     buildSpecCard('Version', vehicle.version),
-    buildSpecCard('Ano', formatYear(vehicle.year)),
+    buildSpecCard('Año', formatYear(vehicle.year)),
     buildSpecCard('Kilometraje', formatKm(vehicle.km)),
     buildSpecCard('Color', vehicle.color),
     buildSpecCard('Combustible', vehicle.combustible),
@@ -406,6 +400,43 @@ function handleThumbClick(event) {
   if (vehicle) {
     renderVehicleModal(vehicle);
   }
+}
+
+function handleModalImageZoomToggle(event) {
+  const image = event.target.closest('img');
+  if (!image || !modalMainMedia.contains(image)) return;
+
+  image.classList.toggle('zoomed');
+
+  if (!image.classList.contains('zoomed')) {
+    image.style.transformOrigin = 'center center';
+  }
+}
+
+function handleModalImageZoomMove(event) {
+  const image = modalMainMedia.querySelector('img.zoomed');
+  if (!image) return;
+
+  const bounds = modalMainMedia.getBoundingClientRect();
+  const x = ((event.clientX - bounds.left) / bounds.width) * 100;
+  const y = ((event.clientY - bounds.top) / bounds.height) * 100;
+
+  image.style.transformOrigin = `${clamp(x, 0, 100)}% ${clamp(y, 0, 100)}%`;
+}
+
+function handleModalImageZoomLeave() {
+  const image = modalMainMedia.querySelector('img.zoomed');
+  if (!image) return;
+
+  image.style.transformOrigin = 'center center';
+}
+
+function resetModalImageZoom() {
+  const image = modalMainMedia.querySelector('img');
+  if (!image) return;
+
+  image.classList.remove('zoomed');
+  image.style.transformOrigin = 'center center';
 }
 
 function sendCurrentVehicleInquiry() {
@@ -469,6 +500,53 @@ function vehicleHeading(vehicle) {
   return `${vehicle.marca} ${vehicle.modelo}`.trim();
 }
 
+function getVehicleCoverPosition(vehicle, context = 'card') {
+  const key = normalizeVehicleKey(vehicleHeading(vehicle));
+
+  if (context === 'featured') {
+    const featuredPositions = {
+      'peugeot 208': '64%',
+    };
+
+    return featuredPositions[key] || '64%';
+  }
+
+  const cardPositions = {
+    'peugeot 208': '62%',
+    'zontes t2': '52%',
+    'fiat strada': '62%',
+    'toyota yaris': '62%',
+    'jeep renegade': '62%',
+    'chevrolet cruze': '66%',
+    'peugeot 2008': '66%',
+    'citroen c3': '85%',
+  };
+
+  return cardPositions[key] || '58%';
+}
+
+function getVehicleCoverScale(vehicle, context = 'card') {
+  const key = normalizeVehicleKey(vehicleHeading(vehicle));
+
+  if (context === 'featured') {
+    return '1';
+  }
+
+  const cardScales = {
+    'toyota etios': '1.18',
+  };
+
+  return cardScales[key] || '1';
+}
+
+function normalizeVehicleKey(value) {
+  return String(value || '')
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+}
+
 function formatPrice(price) {
   if (!price) {
     return 'Precio a consultar';
@@ -478,7 +556,7 @@ function formatPrice(price) {
 }
 
 function formatYear(year) {
-  return year ? String(year) : 'Ano no informado';
+  return year ? String(year) : 'Año no informado';
 }
 
 function formatKm(km) {
@@ -548,4 +626,8 @@ function escapeAttr(value) {
     .replace(/'/g, '&#39;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
 }

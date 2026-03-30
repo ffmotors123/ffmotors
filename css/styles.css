@@ -255,6 +255,7 @@ img {
 
 .section-eyebrow {
   font-size: 1rem;
+  font-weight: 800;
 }
 
 .hero h1,
@@ -267,7 +268,7 @@ img {
 .hero h1 {
   margin-top: 16px;
   font-size: clamp(3.6rem, 8vw, 6.6rem);
-  max-width: 9ch;
+  max-width: 13ch;
 }
 
 .hero-text {
@@ -413,6 +414,12 @@ img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center center;
+  transition: transform 220ms ease, transform-origin 120ms ease;
+}
+
+.featured-media img {
+  object-position: center var(--cover-position-y, 64%);
 }
 
 .vehicle-media > .image-placeholder,
@@ -771,11 +778,13 @@ img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center var(--cover-position-y, 58%);
+  transform: scale(var(--cover-scale, 1));
   transition: transform 280ms ease;
 }
 
 .vehicle-card:hover .vehicle-media img {
-  transform: scale(1.04);
+  transform: scale(calc(var(--cover-scale, 1) * 1.04));
 }
 
 .vehicle-badge,
@@ -1165,6 +1174,8 @@ img {
   left: 50%;
   width: min(1080px, calc(100% - 32px));
   max-height: min(86vh, 820px);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   border-radius: 32px;
   transform: translate(-50%, -46%) scale(0.96);
@@ -1190,19 +1201,31 @@ img {
 .modal-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
-  min-height: min(86vh, 820px);
+  height: min(86vh, 820px);
+  min-height: 0;
 }
 
 .modal-gallery {
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
+  min-height: 0;
   background: #d7e0ef;
 }
 
 .modal-main-media {
   position: relative;
   min-height: 460px;
+  overflow: hidden;
   background: linear-gradient(180deg, #c7d1e1, #f1f4f9);
+}
+
+.modal-main-media img {
+  cursor: zoom-in;
+}
+
+.modal-main-media img.zoomed {
+  cursor: zoom-out;
+  transform: scale(2);
 }
 
 .modal-thumbs {
@@ -1232,11 +1255,15 @@ img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center center;
 }
 
 .modal-content {
   padding: 42px 34px 34px;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-type {

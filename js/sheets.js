@@ -105,6 +105,7 @@ function parseGvizTable(table) {
     }
 
     const photos = collectPhotos(row);
+    const coverPhoto = getCoverPhotoFromRow(row);
     const marca = cleanText(row.marca) || 'Marca';
     const modelo = cleanText(row.modelo) || 'Modelo';
     const version = cleanText(row.version) || 'Version no especificada';
@@ -126,7 +127,7 @@ function parseGvizTable(table) {
       transmision: cleanText(row.transmision) || 'No informado',
       precio,
       photos,
-      coverPhoto: photos[0] || '',
+      coverPhoto,
       title: `${marca} ${modelo}`.trim(),
       searchBlob: [
         tipo,
@@ -186,6 +187,17 @@ function collectPhotos(row) {
   }
 
   return photos;
+}
+
+function getCoverPhotoFromRow(row) {
+  const rawValue = cleanText(row.foto1);
+
+  if (!rawValue) {
+    return '';
+  }
+
+  const firstPhoto = splitPhotoField(rawValue)[0];
+  return normalizePhotoUrl(firstPhoto);
 }
 
 function splitPhotoField(value) {

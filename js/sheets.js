@@ -24,9 +24,35 @@ async function fetchVehiclesFromSheet() {
   throw lastError || new Error('No se pudo leer Google Sheets');
 }
 
+async function fetchSoldVehiclesFromSheet() {
+  const sheetNames = Array.isArray(CONFIG.SHEET_NAME) ? CONFIG.SHEET_NAME : [CONFIG.SHEET_NAME];
+  const candidateSheets = [
+    sheetNames[1],
+    'vendidos',
+    'Vendidos',
+    'unidades vendidas',
+    'Unidades Vendidas',
+  ].filter(Boolean);
+
+  let lastError = null;
+
+  for (const sheetName of [...new Set(candidateSheets)]) {
+    try {
+      const table = await fetchRawSheetTable(sheetName);
+      return parseSoldGvizTable(table);
+    } catch (error) {
+      lastError = error;
+      console.warn(`No se pudo leer la hoja de vendidos "${sheetName}":`, error.message);
+    }
+  }
+
+  throw lastError || new Error('No se pudo leer la hoja de vendidos');
+}
+
 function buildSheetCandidates() {
+  const configuredSheets = Array.isArray(CONFIG.SHEET_NAME) ? CONFIG.SHEET_NAME : [CONFIG.SHEET_NAME];
   const candidates = [
-    CONFIG.SHEET_NAME,
+    configuredSheets[0],
     'catalogo_autos',
     'catalogo_vinos',
     'Sheet1',
@@ -37,6 +63,10 @@ function buildSheetCandidates() {
 }
 
 function fetchSheetByName(sheetName) {
+  return fetchRawSheetTable(sheetName).then(parseGvizTable);
+}
+
+function fetchRawSheetTable(sheetName) {
   return new Promise((resolve, reject) => {
     const callbackName = `_sheetCallback_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
     const scriptId = `sheet-loader-${callbackName}`;
@@ -66,11 +96,7 @@ function fetchSheetByName(sheetName) {
         return;
       }
 
-      try {
-        resolve(parseGvizTable(response.table));
-      } catch (error) {
-        reject(error);
-      }
+      resolve(response.table);
     };
 
     const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq`
@@ -146,13 +172,70 @@ function parseGvizTable(table) {
   return vehicles;
 }
 
+function parseSoldGvizTable(table) {
+  const headers = table.cols.map(col => normalizeHeader(col.label || col.id || ''));
+  const soldVehicles = [];
+
+  for (let index = 0; index < table.rows.length; index++) {
+    const cells = table.rows[index].c || [];
+    const row = {};
+
+    headers.forEach((header, headerIndex) => {
+      row[header] = getCellValue(cells[headerIndex]);
+    });
+
+    const title = cleanText(row.unidadesvendidas)
+      || cleanText(row.unidades_vendidas)
+      || cleanText(row.unidadesvendida)
+      || cleanText(row.unidadvendida)
+      || cleanText(row.unidadvendidas)
+      || cleanText(row.unidad)
+      || cleanText(row.nombre)
+      || getCellValue(cells[0]);
+    const image1 = normalizeSinglePhoto(row.foto1)
+      || normalizeSinglePhoto(row.imagen1)
+      || normalizeSinglePhoto(getCellValue(cells[1]));
+    const image2 = normalizeSinglePhoto(row.foto2)
+      || normalizeSinglePhoto(row.imagen2)
+      || normalizeSinglePhoto(getCellValue(cells[2]));
+    const normalizedTitle = normalizeHeader(title);
+    const normalizedImage1 = normalizeHeader(image1);
+    const normalizedImage2 = normalizeHeader(image2);
+
+    const looksLikeHeaderRow = (
+      ['unidadesvendidas', 'unidadvendida', 'unidad', 'nombre'].includes(normalizedTitle)
+      && ['foto1', 'imagen1', ''].includes(normalizedImage1)
+      && ['foto2', 'imagen2', ''].includes(normalizedImage2)
+    );
+
+    if (looksLikeHeaderRow) {
+      continue;
+    }
+
+    const photos = [image1, image2].filter(Boolean);
+
+    if (!title && !photos.length) {
+      continue;
+    }
+
+    soldVehicles.push({
+      id: index + 1,
+      title: title || `Unidad vendida ${index + 1}`,
+      photos,
+      coverPhoto: photos[0] || '',
+    });
+  }
+
+  return soldVehicles;
+}
+
 function normalizeHeader(value) {
   return String(value)
     .toLowerCase()
     .trim()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, '');
+    .replace(/[\s_-]+/g, '');
 }
 
 function getCellValue(cell) {
@@ -192,6 +275,16 @@ function collectPhotos(row) {
 function getCoverPhotoFromRow(row) {
   const rawValue = cleanText(row.foto1);
 
+  if (!rawValue) {
+    return '';
+  }
+
+  const firstPhoto = splitPhotoField(rawValue)[0];
+  return normalizePhotoUrl(firstPhoto);
+}
+
+function normalizeSinglePhoto(value) {
+  const rawValue = cleanText(value);
   if (!rawValue) {
     return '';
   }

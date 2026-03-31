@@ -10,6 +10,9 @@ let sortOption = 'featured';
 let currentVehicleId = null;
 let currentPhotoIndex = 0;
 let featuredVehicleId = null;
+let viewMode = 'large';
+let currentPage = 1;
+const PAGE_SIZE = 10;
 
 const vehiclesGrid = document.getElementById('vehiclesGrid');
 const loading = document.getElementById('loading');
@@ -20,13 +23,14 @@ const typeFiltersContainer = document.getElementById('typeFilters');
 const brandFiltersContainer = document.getElementById('brandFilters');
 const resultsSummary = document.getElementById('resultsSummary');
 const searchInput = document.getElementById('searchInput');
-const sortSelect = document.getElementById('sortSelect');
 
 const modalOverlay = document.getElementById('modalOverlay');
 const vehicleModal = document.getElementById('vehicleModal');
 const modalClose = document.getElementById('modalClose');
 const modalMainMedia = document.getElementById('modalMainMedia');
 const modalThumbs = document.getElementById('modalThumbs');
+const galleryPrev = document.getElementById('galleryPrev');
+const galleryNext = document.getElementById('galleryNext');
 const modalType = document.getElementById('modalType');
 const modalTitleText = document.getElementById('modalTitle');
 const modalPrice = document.getElementById('modalPrice');
@@ -34,7 +38,6 @@ const modalSpecGrid = document.getElementById('modalSpecGrid');
 const modalWhatsappBtn = document.getElementById('modalWhatsappBtn');
 
 const featuredTitle = document.getElementById('featuredTitle');
-const featuredSpecs = document.getElementById('featuredSpecs');
 const featuredPrice = document.getElementById('featuredPrice');
 const featuredMedia = document.getElementById('featuredMedia');
 const featuredActionBtn = document.getElementById('featuredActionBtn');
@@ -45,19 +48,19 @@ const footerWhatsappLink = document.getElementById('footerWhatsappLink');
 
 document.addEventListener('DOMContentLoaded', () => {
   bindUI();
+  bindSheets();
   syncContactLinks();
   loadVehicles();
+  initServicesCarousel();
 });
 
 function bindUI() {
   retryBtn.addEventListener('click', loadVehicles);
+
   searchInput.addEventListener('input', event => {
     searchTerm = event.target.value.trim().toLowerCase();
-    renderVehicles();
-  });
-
-  sortSelect.addEventListener('change', event => {
-    sortOption = event.target.value;
+    currentPage = 1;
+    updateFilterBadge();
     renderVehicles();
   });
 
@@ -65,7 +68,9 @@ function bindUI() {
     const button = event.target.closest('[data-filter-value]');
     if (!button) return;
     activeType = button.dataset.filterValue;
+    currentPage = 1;
     renderFilterButtons(typeFiltersContainer, getTypeOptions(), activeType);
+    updateFilterBadge();
     renderVehicles();
   });
 
@@ -73,7 +78,9 @@ function bindUI() {
     const button = event.target.closest('[data-filter-value]');
     if (!button) return;
     activeBrand = button.dataset.filterValue;
+    currentPage = 1;
     renderFilterButtons(brandFiltersContainer, getBrandOptions(), activeBrand);
+    updateFilterBadge();
     renderVehicles();
   });
 
@@ -92,10 +99,13 @@ function bindUI() {
   modalMainMedia.addEventListener('mousemove', handleModalImageZoomMove);
   modalMainMedia.addEventListener('mouseleave', handleModalImageZoomLeave);
   modalWhatsappBtn.addEventListener('click', sendCurrentVehicleInquiry);
+  galleryPrev.addEventListener('click', e => { e.stopPropagation(); navigateGallery(-1); });
+  galleryNext.addEventListener('click', e => { e.stopPropagation(); navigateGallery(1); });
 
   document.addEventListener('keydown', event => {
-    if (event.key !== 'Escape') return;
-    closeVehicleModal();
+    if (event.key === 'Escape') { closeVehicleModal(); return; }
+    if (event.key === 'ArrowLeft') navigateGallery(-1);
+    if (event.key === 'ArrowRight') navigateGallery(1);
   });
 }
 
@@ -157,7 +167,6 @@ function renderHeroMetrics() {
 
   if (!featured) {
     featuredTitle.textContent = 'Sin unidades publicadas';
-    featuredSpecs.textContent = 'Cuando cargues el Excel, la ficha destacada se muestra aca.';
     featuredPrice.textContent = '--';
     featuredMedia.innerHTML = getMainImageMarkup('', 'Sin unidades');
     featuredHighlights.innerHTML = '<span>Google Sheets</span><span>Catalogo visual</span><span>WhatsApp</span>';
@@ -166,13 +175,14 @@ function renderHeroMetrics() {
   }
 
   featuredTitle.textContent = vehicleHeading(featured);
-  featuredSpecs.textContent = buildVehicleSummary(featured);
   featuredPrice.textContent = formatPrice(featured.precio);
   featuredMedia.style.setProperty('--cover-position-y', getVehicleCoverPosition(featured, 'featured'));
   featuredMedia.innerHTML = getMainImageMarkup(featured.coverPhoto, vehicleHeading(featured));
   featuredHighlights.innerHTML = [
     featured.tipo,
     formatYear(featured.year),
+    formatKm(featured.km),
+    featured.combustible,
     featured.transmision,
   ].map(label => `<span>${escapeHTML(label)}</span>`).join('');
   featuredActionBtn.textContent = 'Ver ficha';
@@ -180,6 +190,10 @@ function renderHeroMetrics() {
 
 function renderVehicles() {
   const visibleVehicles = getVisibleVehicles();
+  const totalPages = Math.ceil(visibleVehicles.length / PAGE_SIZE);
+  currentPage = Math.min(currentPage, totalPages || 1);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageVehicles = visibleVehicles.slice(start, start + PAGE_SIZE);
 
   loading.hidden = true;
   errorMsg.hidden = true;
@@ -188,11 +202,45 @@ function renderVehicles() {
   if (!visibleVehicles.length) {
     vehiclesGrid.innerHTML = '';
     emptyState.hidden = false;
+    renderPagination(0, 0);
     return;
   }
 
   emptyState.hidden = true;
-  vehiclesGrid.innerHTML = visibleVehicles.map(vehicle => renderVehicleCard(vehicle)).join('');
+  vehiclesGrid.innerHTML = pageVehicles.map(vehicle => renderVehicleCard(vehicle)).join('');
+  renderPagination(currentPage, totalPages);
+}
+
+function renderPagination(page, totalPages) {
+  const existing = document.getElementById('pagination');
+  if (existing) existing.remove();
+  if (totalPages <= 1) return;
+
+  const nav = document.createElement('div');
+  nav.id = 'pagination';
+  nav.className = 'pagination';
+  nav.innerHTML = `
+    <button class="page-btn" id="pagePrev" ${page <= 1 ? 'disabled' : ''} aria-label="Anterior">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 16 7 10 13 4"/></svg>
+    </button>
+    <span class="page-info">${page} <span class="page-sep">/</span> ${totalPages}</span>
+    <button class="page-btn" id="pageNext" ${page >= totalPages ? 'disabled' : ''} aria-label="Siguiente">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 4 13 10 7 16"/></svg>
+    </button>
+  `;
+
+  vehiclesGrid.after(nav);
+
+  nav.querySelector('#pagePrev').addEventListener('click', () => {
+    currentPage--;
+    renderVehicles();
+    document.getElementById('catalogo').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  nav.querySelector('#pageNext').addEventListener('click', () => {
+    currentPage++;
+    renderVehicles();
+    document.getElementById('catalogo').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 }
 
 function getVisibleVehicles() {
@@ -256,7 +304,7 @@ function renderVehicleCard(vehicle) {
   const coverScale = getVehicleCoverScale(vehicle, 'card');
 
   return `
-    <article class="vehicle-card">
+    <article class="vehicle-card" data-action="open-modal" data-id="${vehicle.id}">
       <div class="vehicle-media" style="--cover-position-y: ${escapeAttr(coverPosition)}; --cover-scale: ${escapeAttr(coverScale)};">
         ${getMainImageMarkup(vehicle.coverPhoto, vehicleHeading(vehicle))}
         <span class="gallery-count">${vehicle.photos.length} fotos</span>
@@ -364,7 +412,20 @@ function renderVehicleModal(vehicle) {
   modalTitleText.textContent = vehicleHeading(vehicle);
   modalPrice.textContent = formatPrice(vehicle.precio);
   modalMainMedia.style.setProperty('--modal-cover-position-y', getVehicleCoverPosition(vehicle, 'modal'));
-  modalMainMedia.innerHTML = getMainImageMarkup(currentPhoto, vehicleHeading(vehicle));
+
+  let img = modalMainMedia.querySelector('img');
+  if (currentPhoto) {
+    if (!img) {
+      img = document.createElement('img');
+      img.onerror = () => img.remove();
+      modalMainMedia.insertBefore(img, galleryPrev);
+    }
+    img.src = currentPhoto;
+    img.alt = vehicleHeading(vehicle);
+  } else if (img) {
+    img.remove();
+  }
+
   resetModalImageZoom();
 
   modalThumbs.innerHTML = photos.map((photo, index) => `
@@ -381,22 +442,62 @@ function renderVehicleModal(vehicle) {
   modalSpecGrid.innerHTML = [
     buildSpecCard('Version', vehicle.version),
     buildSpecCard('Año', formatYear(vehicle.year)),
-    buildSpecCard('Kilometraje', formatKm(vehicle.km)),
+    buildSpecCard('Kilometraje', vehicle.km ? vehicle.km.toLocaleString('es-AR') : 'No informado'),
     buildSpecCard('Color', vehicle.color),
     buildSpecCard('Combustible', vehicle.combustible),
     buildSpecCard('Transmision', vehicle.transmision),
   ].join('');
+
+  updateGalleryArrows(photos.length);
 }
 
 function handleThumbClick(event) {
   const button = event.target.closest('[data-thumb-index]');
   if (!button) return;
+  goToPhoto(Number(button.dataset.thumbIndex));
+}
 
-  currentPhotoIndex = Number(button.dataset.thumbIndex);
+function navigateGallery(direction) {
   const vehicle = findVehicle(currentVehicleId);
-  if (vehicle) {
-    renderVehicleModal(vehicle);
+  if (!vehicle) return;
+  const total = vehicle.photos.length || 1;
+  goToPhoto((currentPhotoIndex + direction + total) % total);
+}
+
+function goToPhoto(newIndex) {
+  const vehicle = findVehicle(currentVehicleId);
+  if (!vehicle || newIndex === currentPhotoIndex) return;
+
+  currentPhotoIndex = newIndex;
+
+  const photos = vehicle.photos.length ? vehicle.photos : [''];
+  const newPhoto = photos[newIndex] || photos[0] || '';
+
+  modalThumbs.querySelectorAll('[data-thumb-index]').forEach(btn => {
+    btn.classList.toggle('active', Number(btn.dataset.thumbIndex) === newIndex);
+  });
+
+  const thumb = modalThumbs.querySelector(`[data-thumb-index="${newIndex}"]`);
+  if (thumb) thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+  let img = modalMainMedia.querySelector('img');
+  if (img) {
+    img.src = newPhoto;
+  } else if (newPhoto) {
+    img = document.createElement('img');
+    img.alt = vehicleHeading(vehicle);
+    img.onerror = () => img.remove();
+    img.src = newPhoto;
+    modalMainMedia.appendChild(img);
   }
+
+  updateGalleryArrows(photos.length);
+  resetModalImageZoom();
+}
+
+function updateGalleryArrows(total) {
+  galleryPrev.classList.toggle('hidden', total <= 1);
+  galleryNext.classList.toggle('hidden', total <= 1);
 }
 
 function handleModalImageZoomToggle(event) {
@@ -635,4 +736,136 @@ function escapeAttr(value) {
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
+}
+
+function bindSheets() {
+  const overlay = document.getElementById('sheetOverlay');
+  const sheets = {
+    sort:   document.getElementById('sheetSort'),
+    filter: document.getElementById('sheetFilter'),
+    view:   document.getElementById('sheetView'),
+  };
+
+  function openSheet(key) {
+    Object.values(sheets).forEach(s => s.classList.remove('open'));
+    sheets[key].classList.add('open');
+    overlay.classList.add('open');
+    document.body.classList.add('modal-open');
+  }
+
+  function closeAll() {
+    Object.values(sheets).forEach(s => s.classList.remove('open'));
+    overlay.classList.remove('open');
+    document.body.classList.remove('modal-open');
+  }
+
+  document.getElementById('btnSort').addEventListener('click', () => openSheet('sort'));
+  document.getElementById('btnFilter').addEventListener('click', () => openSheet('filter'));
+  document.getElementById('btnView').addEventListener('click', () => openSheet('view'));
+  overlay.addEventListener('click', closeAll);
+
+  // Sort options
+  document.getElementById('sortOptionList').addEventListener('click', event => {
+    const btn = event.target.closest('[data-sort-value]');
+    if (!btn) return;
+    sortOption = btn.dataset.sortValue;
+    currentPage = 1;
+    document.querySelectorAll('.sheet-opt').forEach(b => b.classList.toggle('active', b === btn));
+    renderVehicles();
+    closeAll();
+  });
+
+  // View options
+  document.getElementById('viewToggle').addEventListener('click', event => {
+    const btn = event.target.closest('[data-view]');
+    if (!btn) return;
+    viewMode = btn.dataset.view;
+    document.querySelectorAll('.sheet-view-btn').forEach(b => b.classList.toggle('active', b === btn));
+    vehiclesGrid.className = `vehicles-grid view-${viewMode}`;
+    closeAll();
+  });
+}
+
+function updateFilterBadge() {
+  const badge = document.getElementById('filterBadge');
+  const active = searchTerm || activeType !== 'Todos' || activeBrand !== 'Todas';
+  badge.hidden = !active;
+}
+
+function initServicesCarousel() {
+  const track = document.getElementById('servicesTrack');
+  const dots = document.querySelectorAll('.services-dot');
+  const prev = document.getElementById('servicesPrev');
+  const next = document.getElementById('servicesNext');
+  if (!track) return;
+
+  const realSlides = [...track.children];
+  const total = realSlides.length;
+
+  // Clone first and last to enable infinite loop
+  track.appendChild(realSlides[0].cloneNode(true));
+  track.prepend(realSlides[total - 1].cloneNode(true));
+
+  // current is 1-based: 1 = first real slide, total = last real slide
+  let current = 1;
+  let isAnimating = false;
+  let autoplayTimer;
+
+  function setPosition(index, animate) {
+    track.style.transition = animate ? 'transform 420ms cubic-bezier(0.4,0,0.2,1)' : 'none';
+    track.style.transform = `translateX(-${index * 100}%)`;
+  }
+
+  function updateDots(index) {
+    const realIndex = (index - 1 + total) % total;
+    dots.forEach((d, i) => d.classList.toggle('active', i === realIndex));
+  }
+
+  function goTo(index) {
+    if (isAnimating) return;
+    current = index;
+    setPosition(current, true);
+    updateDots(current);
+    isAnimating = true;
+  }
+
+  track.addEventListener('transitionend', () => {
+    isAnimating = false;
+    if (current === 0) {
+      current = total;
+      setPosition(current, false);
+    } else if (current === total + 1) {
+      current = 1;
+      setPosition(current, false);
+    }
+    updateDots(current);
+  });
+
+  function startAutoplay() {
+    autoplayTimer = setInterval(() => goTo(current + 1), 3000);
+  }
+
+  function resetAutoplay() {
+    clearInterval(autoplayTimer);
+    startAutoplay();
+  }
+
+  setPosition(current, false);
+  updateDots(current);
+
+  prev.addEventListener('click', () => { goTo(current - 1); resetAutoplay(); });
+  next.addEventListener('click', () => { goTo(current + 1); resetAutoplay(); });
+  dots.forEach(dot => dot.addEventListener('click', () => {
+    goTo(Number(dot.dataset.index) + 1);
+    resetAutoplay();
+  }));
+
+  let startX = 0;
+  track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend', e => {
+    const diff = startX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) { goTo(diff > 0 ? current + 1 : current - 1); resetAutoplay(); }
+  });
+
+  startAutoplay();
 }

@@ -19,9 +19,9 @@
       </a>
 
       <nav class="main-nav">
+        <a href="#featuredUnit">Destacados</a>
         <a href="#catalogo">Stock</a>
         <a href="#servicios">Servicios</a>
-        <a href="#contacto">Contacto</a>
       </nav>
 
       <div class="header-actions">
@@ -36,14 +36,13 @@
     <section class="hero" id="inicio">
       <div class="hero-copy">
         <p class="eyebrow">Usados seleccionados | gestion simple | atencion directa</p>
-        <h1>Autos listos para salir a la calle.</h1>
+        <h1>Vendé tu auto sin hacer nada.</h1>
         <p class="hero-text">
-          Publicamos unidades con fotos reales, informacion clara y atencion comercial por WhatsApp para que elijas, compares y consultes de forma rapida.
+          Publicamos, mostramos y cerramos la venta por vos. Al mejor precio y SIN moverte.
         </p>
 
         <div class="hero-actions">
           <a href="#catalogo" class="primary-btn">Ver stock disponible</a>
-          <a href="#contacto" class="secondary-btn">Hablar con un asesor</a>
         </div>
 
         <div class="hero-stats">
@@ -70,7 +69,6 @@
           <div class="featured-body">
             <p class="featured-label">Unidad destacada</p>
             <h2 id="featuredTitle">Cargando stock...</h2>
-            <p class="featured-specs" id="featuredSpecs">Seleccionando la mejor unidad del catalogo</p>
 
             <div class="featured-highlights" id="featuredHighlights">
               <span>Fotos reales</span>
@@ -115,30 +113,40 @@
         <p class="results-summary" id="resultsSummary">Cargando stock...</p>
       </div>
 
-      <div class="inventory-toolbar">
-        <label class="search-field" for="searchInput">
-          <span>Buscar</span>
-          <input
-            type="search"
-            id="searchInput"
-            placeholder="Marca, modelo, version, combustible..."
-            autocomplete="off"
-          >
-        </label>
-
-        <label class="sort-field" for="sortSelect">
-          <span>Ordenar por</span>
-          <select id="sortSelect">
-            <option value="featured">Destacados</option>
-            <option value="year-desc">Año mas nuevo</option>
-            <option value="km-asc">Menor kilometraje</option>
-            <option value="price-asc">Menor precio</option>
-            <option value="price-desc">Mayor precio</option>
-          </select>
-        </label>
+      <div class="quick-toolbar">
+        <button class="quick-btn" id="btnSort" type="button">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="13" y2="10"/><line x1="3" y1="15" x2="9" y2="15"/></svg>
+          <span>Ordenar</span>
+        </button>
+        <button class="quick-btn" id="btnFilter" type="button">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 3 17 3 11 11 11 17 9 17 9 11"/></svg>
+          <span>Filtrar</span>
+          <span class="quick-badge" id="filterBadge" hidden></span>
+        </button>
+        <button class="quick-btn" id="btnView" type="button">
+          <svg viewBox="0 0 20 20" fill="currentColor"><rect x="2" y="2" width="7" height="7" rx="1.5"/><rect x="11" y="2" width="7" height="7" rx="1.5"/><rect x="2" y="11" width="7" height="7" rx="1.5"/><rect x="11" y="11" width="7" height="7" rx="1.5"/></svg>
+          <span>Vista</span>
+        </button>
       </div>
 
-      <div class="filters-panel">
+      <div class="sheet-overlay" id="sheetOverlay"></div>
+
+      <div class="bottom-sheet" id="sheetSort">
+        <div class="sheet-handle"></div>
+        <p class="sheet-title">Ordenar por</p>
+        <div class="sheet-list" id="sortOptionList">
+          <button class="sheet-opt active" data-sort-value="featured" type="button">Destacados</button>
+          <button class="sheet-opt" data-sort-value="year-desc" type="button">Año más nuevo</button>
+          <button class="sheet-opt" data-sort-value="km-asc" type="button">Menor kilometraje</button>
+          <button class="sheet-opt" data-sort-value="price-asc" type="button">Menor precio</button>
+          <button class="sheet-opt" data-sort-value="price-desc" type="button">Mayor precio</button>
+        </div>
+      </div>
+
+      <div class="bottom-sheet" id="sheetFilter">
+        <div class="sheet-handle"></div>
+        <p class="sheet-title">Filtrar</p>
+        <input class="sheet-search" type="search" id="searchInput" placeholder="Marca, modelo, version..." autocomplete="off">
         <div class="filter-row">
           <span class="filter-title">Tipo</span>
           <div class="filters" id="typeFilters"></div>
@@ -146,6 +154,25 @@
         <div class="filter-row">
           <span class="filter-title">Marca</span>
           <div class="filters" id="brandFilters"></div>
+        </div>
+      </div>
+
+      <div class="bottom-sheet" id="sheetView">
+        <div class="sheet-handle"></div>
+        <p class="sheet-title">Modo de vista</p>
+        <div class="sheet-view-opts" id="viewToggle">
+          <button class="sheet-view-btn active" data-view="large" type="button">
+            <svg viewBox="0 0 20 20" fill="currentColor"><rect x="2" y="2" width="7" height="7" rx="1.5"/><rect x="11" y="2" width="7" height="7" rx="1.5"/><rect x="2" y="11" width="7" height="7" rx="1.5"/><rect x="11" y="11" width="7" height="7" rx="1.5"/></svg>
+            Grande
+          </button>
+          <button class="sheet-view-btn" data-view="small" type="button">
+            <svg viewBox="0 0 20 20" fill="currentColor"><rect x="2" y="2" width="4" height="4" rx="1"/><rect x="8" y="2" width="4" height="4" rx="1"/><rect x="14" y="2" width="4" height="4" rx="1"/><rect x="2" y="8" width="4" height="4" rx="1"/><rect x="8" y="8" width="4" height="4" rx="1"/><rect x="14" y="8" width="4" height="4" rx="1"/><rect x="2" y="14" width="4" height="4" rx="1"/><rect x="8" y="14" width="4" height="4" rx="1"/><rect x="14" y="14" width="4" height="4" rx="1"/></svg>
+            Compacta
+          </button>
+          <button class="sheet-view-btn" data-view="list" type="button">
+            <svg viewBox="0 0 20 20" fill="currentColor"><rect x="2" y="2" width="16" height="4" rx="1.5"/><rect x="2" y="8" width="16" height="4" rx="1.5"/><rect x="2" y="14" width="16" height="4" rx="1.5"/></svg>
+            Lista
+          </button>
         </div>
       </div>
 
@@ -164,7 +191,7 @@
         <p>Prueba limpiando la busqueda o cambiando tipo y marca.</p>
       </div>
 
-      <div class="vehicles-grid" id="vehiclesGrid"></div>
+      <div class="vehicles-grid view-large" id="vehiclesGrid"></div>
     </section>
 
     <section class="services-section" id="servicios">
@@ -174,18 +201,34 @@
         </div>
       </div>
 
-      <div class="services-grid">
-        <article class="service-card">
-          <span class="service-number">01</span>
-          <h3>Servicio de venta de tu vehiculo</h3>
-          <p>Publicamos tu unidad, la mostramos de forma profesional y te ayudamos a gestionar consultas de potenciales compradores.</p>
-        </article>
+      <div class="services-carousel">
+        <div class="services-track" id="servicesTrack">
+          <article class="service-card">
+            <span class="service-number">01</span>
+            <h3>Servicio de venta de tu vehiculo</h3>
+            <p>Publicamos tu unidad, la mostramos de forma profesional y te ayudamos a gestionar consultas de potenciales compradores.</p>
+          </article>
 
-        <article class="service-card">
-          <span class="service-number">02</span>
-          <h3>Servicio de peritaje a domicilio</h3>
-          <p>Evaluamos el vehiculo donde te quede comodo para brindarte una revision clara y agil antes de avanzar con la operacion.</p>
-        </article>
+          <article class="service-card service-card--media">
+            <div class="service-card-body">
+              <span class="service-number">02</span>
+              <h3>Servicio de peritaje a domicilio</h3>
+              <p>Evaluamos el vehiculo donde te quede comodo para brindarte una revision clara y agil antes de avanzar con la operacion.</p>
+            </div>
+            <div class="service-card-image">
+              <img src="img/peritaje.jpeg" alt="Peritaje a domicilio">
+            </div>
+          </article>
+        </div>
+
+        <div class="services-nav">
+          <button class="services-arrow" id="servicesPrev" aria-label="Servicio anterior">&#8249;</button>
+          <div class="services-dots" id="servicesDots">
+            <button class="services-dot active" data-index="0" aria-label="Servicio 1"></button>
+            <button class="services-dot" data-index="1" aria-label="Servicio 2"></button>
+          </div>
+          <button class="services-arrow" id="servicesNext" aria-label="Servicio siguiente">&#8250;</button>
+        </div>
       </div>
     </section>
   </main>
@@ -202,6 +245,12 @@
               <path d="M11 38l4-12a6 6 0 0 1 5.7-4.1h22.7a6 6 0 0 1 5.7 4.1L53 38h3a3 3 0 0 1 3 3v4a3 3 0 0 1-3 3h-2a5 5 0 0 1-10 0H20a5 5 0 0 1-10 0H8a3 3 0 0 1-3-3v-4a3 3 0 0 1 3-3h3zm10.6-10a2 2 0 0 0-1.9 1.3L17 38h30l-2.7-8.7a2 2 0 0 0-1.9-1.3zM15 48a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm34 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"></path>
             </svg>
           </div>
+          <button class="gallery-arrow gallery-arrow-prev" id="galleryPrev" aria-label="Foto anterior">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="gallery-arrow gallery-arrow-next" id="galleryNext" aria-label="Foto siguiente">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
         </div>
         <div class="modal-thumbs" id="modalThumbs"></div>
       </div>
@@ -224,13 +273,11 @@
     <div class="footer-shell">
       <div>
         <p class="footer-brand">FF Motors</p>
-        <p class="footer-copy">Catalogo digital para mostrar stock automotor con lectura desde Google Sheets y cierre comercial por WhatsApp.</p>
       </div>
 
       <div class="footer-links">
-        <a href="#catalogo">Ver stock</a>
-        <a href="#servicios">Servicios</a>
         <a id="footerWhatsappLink" href="#" target="_blank" rel="noreferrer">Escribir por WhatsApp</a>
+        <a href="https://www.instagram.com/ffmotors_ok/" target="_blank" rel="noreferrer">Instagram</a>
       </div>
     </div>
   </footer>

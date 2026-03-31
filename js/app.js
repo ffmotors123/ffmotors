@@ -13,6 +13,7 @@ let featuredVehicleId = null;
 let viewMode = 'large';
 let currentPage = 1;
 const PAGE_SIZE = 10;
+let soldVehicles = [];
 
 const vehiclesGrid = document.getElementById('vehiclesGrid');
 const loading = document.getElementById('loading');
@@ -23,6 +24,10 @@ const typeFiltersContainer = document.getElementById('typeFilters');
 const brandFiltersContainer = document.getElementById('brandFilters');
 const resultsSummary = document.getElementById('resultsSummary');
 const searchInput = document.getElementById('searchInput');
+const soldVehiclesGrid = document.getElementById('soldVehiclesGrid');
+const soldLoading = document.getElementById('soldLoading');
+const soldEmptyState = document.getElementById('soldEmptyState');
+const soldSummary = document.getElementById('soldSummary');
 
 const modalOverlay = document.getElementById('modalOverlay');
 const vehicleModal = document.getElementById('vehicleModal');
@@ -51,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
   bindSheets();
   syncContactLinks();
   loadVehicles();
+  loadSoldVehicles();
   initServicesCarousel();
 });
 
@@ -85,6 +91,7 @@ function bindUI() {
   });
 
   vehiclesGrid.addEventListener('click', handleVehicleGridClick);
+  soldVehiclesGrid.addEventListener('click', handleSoldGridClick);
 
   featuredActionBtn.addEventListener('click', () => {
     if (featuredVehicleId) {
@@ -129,6 +136,24 @@ async function loadVehicles() {
     loading.hidden = true;
     errorMsg.hidden = false;
     resultsSummary.textContent = 'No se pudo cargar el stock.';
+  }
+}
+
+async function loadSoldVehicles() {
+  soldVehicles = [];
+  soldLoading.hidden = false;
+  soldEmptyState.hidden = true;
+  soldVehiclesGrid.innerHTML = '';
+  soldSummary.textContent = 'Cargando vendidos...';
+
+  try {
+    soldVehicles = await fetchSoldVehiclesFromSheet();
+    renderSoldVehicles();
+  } catch (error) {
+    console.error('Error cargando vendidos:', error);
+    soldLoading.hidden = true;
+    soldSummary.textContent = 'No se pudo cargar vendidos.';
+    soldEmptyState.hidden = false;
   }
 }
 
@@ -209,6 +234,21 @@ function renderVehicles() {
   emptyState.hidden = true;
   vehiclesGrid.innerHTML = pageVehicles.map(vehicle => renderVehicleCard(vehicle)).join('');
   renderPagination(currentPage, totalPages);
+}
+
+function renderSoldVehicles() {
+  soldLoading.hidden = true;
+
+  if (!soldVehicles.length) {
+    soldVehiclesGrid.innerHTML = '';
+    soldSummary.textContent = 'No hay unidades vendidas cargadas.';
+    soldEmptyState.hidden = false;
+    return;
+  }
+
+  soldEmptyState.hidden = true;
+  soldSummary.textContent = `${soldVehicles.length} unidades vendidas`;
+  soldVehiclesGrid.innerHTML = soldVehicles.map(vehicle => renderSoldVehicleCard(vehicle)).join('');
 }
 
 function renderPagination(page, totalPages) {
@@ -356,6 +396,43 @@ function renderVehicleCard(vehicle) {
   `;
 }
 
+function renderSoldVehicleCard(vehicle) {
+  const photos = vehicle.photos.length ? vehicle.photos : [''];
+
+  return `
+    <article class="sold-card">
+      <div class="sold-media">
+        <div class="sold-carousel-track" style="--sold-slides: ${photos.length};">
+          ${photos.map((photo, index) => `
+            <div class="sold-slide">
+              ${getMainImageMarkup(photo, `${vehicle.title} foto ${index + 1}`)}
+            </div>
+          `).join('')}
+        </div>
+        ${photos.length > 1 ? `
+          <button class="sold-arrow sold-arrow-prev" type="button" data-action="sold-prev" data-id="${vehicle.id}" aria-label="Foto anterior">&#8249;</button>
+          <button class="sold-arrow sold-arrow-next" type="button" data-action="sold-next" data-id="${vehicle.id}" aria-label="Foto siguiente">&#8250;</button>
+          <div class="sold-dots">
+            ${photos.map((_, index) => `
+              <button
+                class="sold-dot${index === 0 ? ' active' : ''}"
+                type="button"
+                data-action="sold-dot"
+                data-id="${vehicle.id}"
+                data-index="${index}"
+                aria-label="Ver imagen ${index + 1}"
+              ></button>
+            `).join('')}
+          </div>
+        ` : ''}
+      </div>
+      <div class="sold-body">
+        <h3 class="sold-title">${escapeHTML(vehicle.title)}</h3>
+      </div>
+    </article>
+  `;
+}
+
 function renderSpecPill(label) {
   return `<span class="spec-pill">${escapeHTML(label || 'No informado')}</span>`;
 }
@@ -381,6 +458,41 @@ function handleVehicleGridClick(event) {
   if (button.dataset.action === 'open-modal') {
     openVehicleModal(vehicleId);
   }
+}
+
+function handleSoldGridClick(event) {
+  const button = event.target.closest('[data-action]');
+  if (!button) return;
+
+  const card = button.closest('.sold-card');
+  if (!card) return;
+
+  const vehicleId = Number(button.dataset.id);
+  const vehicle = soldVehicles.find(item => item.id === vehicleId);
+  if (!vehicle || vehicle.photos.length <= 1) return;
+
+  const track = card.querySelector('.sold-carousel-track');
+  const dots = [...card.querySelectorAll('.sold-dot')];
+  const currentIndex = Number(track.dataset.index || '0');
+  let nextIndex = currentIndex;
+
+  if (button.dataset.action === 'sold-prev') {
+    nextIndex = (currentIndex - 1 + vehicle.photos.length) % vehicle.photos.length;
+  }
+
+  if (button.dataset.action === 'sold-next') {
+    nextIndex = (currentIndex + 1) % vehicle.photos.length;
+  }
+
+  if (button.dataset.action === 'sold-dot') {
+    nextIndex = Number(button.dataset.index || '0');
+  }
+
+  track.dataset.index = String(nextIndex);
+  track.style.transform = `translateX(-${nextIndex * 100}%)`;
+  dots.forEach((dot, index) => {
+    dot.classList.toggle('active', index === nextIndex);
+  });
 }
 
 function openVehicleModal(vehicleId) {

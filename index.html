@@ -21,6 +21,7 @@
       <nav class="main-nav">
         <a href="#featuredUnit">Destacados</a>
         <a href="#catalogo">Stock</a>
+        <a href="#vendidos">Vendidos</a>
         <a href="#servicios">Servicios</a>
       </nav>
 
@@ -97,10 +98,6 @@
       <article>
         <strong>Presentacion clara</strong>
         <p>Cada unidad muestra modelo, version, combustible, transmision, color y precio.</p>
-      </article>
-      <article>
-        <strong>Contacto comercial</strong>
-        <p>Cada unidad permite iniciar una consulta directa por WhatsApp con el asesor.</p>
       </article>
     </section>
 
@@ -192,6 +189,28 @@
       </div>
 
       <div class="vehicles-grid view-large" id="vehiclesGrid"></div>
+    </section>
+
+    <section class="sold-section" id="vendidos">
+      <div class="section-heading">
+        <div>
+          <p class="section-eyebrow">Vendidos</p>
+          <h2>Unidades vendidas</h2>
+        </div>
+        <p class="results-summary" id="soldSummary">Cargando vendidos...</p>
+      </div>
+
+      <div class="loading" id="soldLoading">
+        <div class="spinner"></div>
+        <p>Cargando vendidos...</p>
+      </div>
+
+      <div class="empty-state" id="soldEmptyState" hidden>
+        <h3>Todavia no hay unidades vendidas publicadas</h3>
+        <p>Cuando cargues la hoja vendidos, apareceran aca.</p>
+      </div>
+
+      <div class="sold-grid" id="soldVehiclesGrid"></div>
     </section>
 
     <section class="services-section" id="servicios">

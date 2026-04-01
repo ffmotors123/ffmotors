@@ -198,6 +198,7 @@ function parseSoldGvizTable(table) {
     const image2 = normalizeSinglePhoto(row.foto2)
       || normalizeSinglePhoto(row.imagen2)
       || normalizeSinglePhoto(getCellValue(cells[2]));
+    const comment = cleanText(row.comentario) || cleanText(getCellValue(cells[3]));
     const normalizedTitle = normalizeHeader(title);
     const normalizedImage1 = normalizeHeader(image1);
     const normalizedImage2 = normalizeHeader(image2);
@@ -223,6 +224,7 @@ function parseSoldGvizTable(table) {
       title: title || `Unidad vendida ${index + 1}`,
       photos,
       coverPhoto: photos[0] || '',
+      comment,
     });
   }
 

@@ -1760,6 +1760,15 @@ img {
   padding-top: 34px;
 }
 
+.vehicle-modal.sold-mode .modal-comment {
+  max-width: 42ch;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: #f3f7fc;
+  border: 1px solid rgba(9, 24, 42, 0.08);
+  color: #24344f;
+}
+
 .vehicle-modal .modal-close {
   position: absolute;
   top: 16px;
@@ -1885,6 +1894,14 @@ img {
   letter-spacing: 0.18em;
   font-size: 0.76rem;
   font-weight: 700;
+}
+
+.modal-comment {
+  margin-top: 16px;
+  color: var(--text-dark-soft);
+  font-size: 1.02rem;
+  line-height: 1.6;
+  font-style: italic;
 }
 
 .modal-version {

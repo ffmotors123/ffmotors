@@ -9,7 +9,7 @@ const CONFIG = {
 
   // 2. Nombre de la hoja (pestana).
   //    Si no coincide, el lector prueba otras opciones comunes.
-  SHEET_NAME: ['autos', 'vendidos', 'comentarios'],
+  SHEET_NAME: ['autos', 'vendidos'],
 
   // 3. Numero de WhatsApp (sin + ni espacios)
   WHATSAPP_NUMBER: '543513107854',

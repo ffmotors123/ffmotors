@@ -40,6 +40,7 @@ const galleryPrev = document.getElementById('galleryPrev');
 const galleryNext = document.getElementById('galleryNext');
 const modalType = document.getElementById('modalType');
 const modalTitleText = document.getElementById('modalTitle');
+const modalComment = document.getElementById('modalComment');
 const modalPrice = document.getElementById('modalPrice');
 const modalSpecGrid = document.getElementById('modalSpecGrid');
 const modalWhatsappBtn = document.getElementById('modalWhatsappBtn');
@@ -553,6 +554,8 @@ function renderVehicleModal(vehicle) {
   modalPrice.hidden = false;
   modalSpecGrid.hidden = false;
   modalWhatsappBtn.parentElement.hidden = false;
+  modalComment.hidden = true;
+  modalComment.textContent = '';
   modalType.textContent = vehicle.tipo;
   modalTitleText.textContent = vehicleHeading(vehicle);
   modalPrice.textContent = formatPrice(vehicle.precio);
@@ -603,6 +606,9 @@ function renderSoldVehicleModal(vehicle) {
   vehicleModal.classList.add('sold-mode');
   modalType.textContent = 'Vendido';
   modalTitleText.textContent = vehicle.title;
+  modalComment.hidden = !vehicle.comment;
+  modalComment.textContent = vehicle.comment ? `"${vehicle.comment}"` : '';
+  modalPrice.textContent = '';
   modalPrice.hidden = true;
   modalSpecGrid.hidden = true;
   modalWhatsappBtn.parentElement.hidden = true;

@@ -211,6 +211,7 @@
       </div>
 
       <div class="sold-grid" id="soldVehiclesGrid"></div>
+      <div class="pagination" id="soldPagination" hidden></div>
     </section>
 
     <section class="services-section" id="servicios">
@@ -222,10 +223,15 @@
 
       <div class="services-carousel">
         <div class="services-track" id="servicesTrack">
-          <article class="service-card">
-            <span class="service-number">01</span>
-            <h3>Servicio de venta de tu vehiculo</h3>
-            <p>Publicamos tu unidad, la mostramos de forma profesional y te ayudamos a gestionar consultas de potenciales compradores.</p>
+          <article class="service-card service-card--media">
+            <div class="service-card-body">
+              <span class="service-number">01</span>
+              <h3>Servicio de venta de tu vehiculo</h3>
+              <p>Publicamos tu unidad, la mostramos de forma profesional y te ayudamos a gestionar consultas de potenciales compradores.</p>
+            </div>
+            <div class="service-card-image">
+              <img src="img/venta-vehiculo.jpg" alt="Servicio de venta de vehiculo">
+            </div>
           </article>
 
           <article class="service-card service-card--media">
@@ -238,6 +244,17 @@
               <img src="img/peritaje.jpeg" alt="Peritaje a domicilio">
             </div>
           </article>
+
+          <article class="service-card service-card--media">
+            <div class="service-card-body">
+              <span class="service-number">03</span>
+              <h3>Lavado Premium</h3>
+              <p>Dejamos tu auto impecable, con limpieza profunda interior y exterior, terminaciones cuidadas y una presentacion lista para lucirse en fotos o entregas.</p>
+            </div>
+            <div class="service-card-image">
+              <img src="img/lavado-premium.jpg" alt="Lavado Premium">
+            </div>
+          </article>
         </div>
 
         <div class="services-nav">
@@ -245,6 +262,7 @@
           <div class="services-dots" id="servicesDots">
             <button class="services-dot active" data-index="0" aria-label="Servicio 1"></button>
             <button class="services-dot" data-index="1" aria-label="Servicio 2"></button>
+            <button class="services-dot" data-index="2" aria-label="Servicio 3"></button>
           </div>
           <button class="services-arrow" id="servicesNext" aria-label="Servicio siguiente">&#8250;</button>
         </div>

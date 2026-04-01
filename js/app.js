@@ -16,6 +16,8 @@ let viewMode = 'large';
 let currentPage = 1;
 const PAGE_SIZE = 10;
 let soldVehicles = [];
+let soldCurrentPage = 1;
+const SOLD_PAGE_SIZE = 6;
 
 const vehiclesGrid = document.getElementById('vehiclesGrid');
 const loading = document.getElementById('loading');
@@ -30,6 +32,7 @@ const soldVehiclesGrid = document.getElementById('soldVehiclesGrid');
 const soldLoading = document.getElementById('soldLoading');
 const soldEmptyState = document.getElementById('soldEmptyState');
 const soldSummary = document.getElementById('soldSummary');
+const soldPagination = document.getElementById('soldPagination');
 
 const modalOverlay = document.getElementById('modalOverlay');
 const vehicleModal = document.getElementById('vehicleModal');
@@ -44,6 +47,7 @@ const modalComment = document.getElementById('modalComment');
 const modalPrice = document.getElementById('modalPrice');
 const modalSpecGrid = document.getElementById('modalSpecGrid');
 const modalWhatsappBtn = document.getElementById('modalWhatsappBtn');
+const modalActions = modalWhatsappBtn.closest('.modal-actions');
 
 const featuredTitle = document.getElementById('featuredTitle');
 const featuredPrice = document.getElementById('featuredPrice');
@@ -144,9 +148,12 @@ async function loadVehicles() {
 
 async function loadSoldVehicles() {
   soldVehicles = [];
+  soldCurrentPage = 1;
   soldLoading.hidden = false;
   soldEmptyState.hidden = true;
   soldVehiclesGrid.innerHTML = '';
+  soldPagination.hidden = true;
+  soldPagination.innerHTML = '';
   soldSummary.textContent = 'Cargando vendidos...';
 
   try {
@@ -157,6 +164,8 @@ async function loadSoldVehicles() {
     soldLoading.hidden = true;
     soldSummary.textContent = 'No se pudo cargar vendidos.';
     soldEmptyState.hidden = false;
+    soldPagination.hidden = true;
+    soldPagination.innerHTML = '';
   }
 }
 
@@ -246,12 +255,20 @@ function renderSoldVehicles() {
     soldVehiclesGrid.innerHTML = '';
     soldSummary.textContent = 'No hay unidades vendidas cargadas.';
     soldEmptyState.hidden = false;
+    soldPagination.hidden = true;
+    soldPagination.innerHTML = '';
     return;
   }
 
+  const totalPages = Math.ceil(soldVehicles.length / SOLD_PAGE_SIZE);
+  soldCurrentPage = Math.min(soldCurrentPage, totalPages || 1);
+  const start = (soldCurrentPage - 1) * SOLD_PAGE_SIZE;
+  const pageVehicles = soldVehicles.slice(start, start + SOLD_PAGE_SIZE);
+
   soldEmptyState.hidden = true;
-  soldSummary.textContent = `${soldVehicles.length} unidades vendidas`;
-  soldVehiclesGrid.innerHTML = soldVehicles.map(vehicle => renderSoldVehicleCard(vehicle)).join('');
+  soldSummary.textContent = `Mostrando ${pageVehicles.length} de ${soldVehicles.length} unidades vendidas`;
+  soldVehiclesGrid.innerHTML = pageVehicles.map(vehicle => renderSoldVehicleCard(vehicle)).join('');
+  renderSoldPagination(soldCurrentPage, totalPages);
 }
 
 function renderPagination(page, totalPages) {
@@ -401,10 +418,12 @@ function renderVehicleCard(vehicle) {
 
 function renderSoldVehicleCard(vehicle) {
   const photos = vehicle.photos.length ? vehicle.photos : [''];
+  const coverPosition = getSoldVehicleCoverPosition(vehicle);
+  const coverScale = getSoldVehicleCoverScale(vehicle);
 
   return `
     <article class="sold-card" data-sold-id="${vehicle.id}">
-      <div class="sold-media">
+      <div class="sold-media" style="--sold-cover-position-y: ${escapeAttr(coverPosition)}; --sold-cover-scale: ${escapeAttr(coverScale)};">
         <div class="sold-carousel-track" style="--sold-slides: ${photos.length};">
           ${photos.map((photo, index) => `
             <div class="sold-slide">
@@ -505,6 +524,38 @@ function handleSoldGridClick(event) {
   });
 }
 
+function renderSoldPagination(page, totalPages) {
+  soldPagination.innerHTML = '';
+
+  if (totalPages <= 1) {
+    soldPagination.hidden = true;
+    return;
+  }
+
+  soldPagination.hidden = false;
+  soldPagination.innerHTML = `
+    <button class="page-btn" id="soldPagePrev" ${page <= 1 ? 'disabled' : ''} aria-label="Anterior">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 16 7 10 13 4"/></svg>
+    </button>
+    <span class="page-info">${page} <span class="page-sep">/</span> ${totalPages}</span>
+    <button class="page-btn" id="soldPageNext" ${page >= totalPages ? 'disabled' : ''} aria-label="Siguiente">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 4 13 10 7 16"/></svg>
+    </button>
+  `;
+
+  soldPagination.querySelector('#soldPagePrev').addEventListener('click', () => {
+    soldCurrentPage--;
+    renderSoldVehicles();
+    document.getElementById('vendidos').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  soldPagination.querySelector('#soldPageNext').addEventListener('click', () => {
+    soldCurrentPage++;
+    renderSoldVehicles();
+    document.getElementById('vendidos').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
+
 function openVehicleModal(vehicleId) {
   const vehicle = findVehicle(vehicleId);
   if (!vehicle) return;
@@ -553,7 +604,7 @@ function renderVehicleModal(vehicle) {
   vehicleModal.classList.remove('sold-mode');
   modalPrice.hidden = false;
   modalSpecGrid.hidden = false;
-  modalWhatsappBtn.parentElement.hidden = false;
+  modalActions.hidden = false;
   modalComment.hidden = true;
   modalComment.textContent = '';
   modalType.textContent = vehicle.tipo;
@@ -611,7 +662,7 @@ function renderSoldVehicleModal(vehicle) {
   modalPrice.textContent = '';
   modalPrice.hidden = true;
   modalSpecGrid.hidden = true;
-  modalWhatsappBtn.parentElement.hidden = true;
+  modalActions.hidden = true;
   modalMainMedia.style.setProperty('--modal-cover-position-y', '50%');
 
   let img = modalMainMedia.querySelector('img');
@@ -845,6 +896,35 @@ function getVehicleCoverScale(vehicle, context = 'card') {
   };
 
   return cardScales[key] || '1';
+}
+
+function getSoldVehicleCoverPosition(vehicle) {
+  const key = normalizeVehicleKey(vehicle.title);
+
+  const soldPositions = {
+    'citroen jumpy': '55%',
+    'ford fiesta kinetic': '56%',
+    'ford mondeo sel': '64%',
+    'renault capture': '64%',
+    'renault logan': '64%',
+    'vw amarok highline': '50%',
+  };
+
+  return soldPositions[key] || '45%';
+}
+
+function getSoldVehicleCoverScale(vehicle) {
+  const key = normalizeVehicleKey(vehicle.title);
+
+  const soldScales = {
+    'citroen jumpy': '1',
+    'ford mondeo sel': '1.04',
+    'renault capture': '1.04',
+    'renault logan': '1.04',
+    'vw amarok highline': '1.04',
+  };
+
+  return soldScales[key] || '1.16';
 }
 
 function normalizeVehicleKey(value) {

@@ -175,6 +175,14 @@ function parseGvizTable(table) {
 function parseSoldGvizTable(table) {
   const headers = table.cols.map(col => normalizeHeader(col.label || col.id || ''));
   const soldVehicles = [];
+  const titleColumnIndex = headers.findIndex(header => ['unidadesvendidas', 'unidades_vendidas', 'unidadesvendida', 'unidadvendida', 'unidadvendidas', 'unidad', 'nombre'].includes(header));
+  const image1ColumnIndex = headers.findIndex(header => ['foto1', 'imagen1'].includes(header));
+  const image2ColumnIndex = headers.findIndex(header => ['foto2', 'imagen2'].includes(header));
+  const commentColumnIndex = headers.findIndex(header => ['comentario', 'comentarios', 'comentariocliente', 'observacion', 'observaciones', 'descripcion'].includes(header));
+  const hasSecondImageColumn = image2ColumnIndex >= 0;
+  const fallbackCommentColumnIndex = commentColumnIndex >= 0
+    ? commentColumnIndex
+    : (!hasSecondImageColumn && headers.length >= 3 ? 2 : 3);
 
   for (let index = 0; index < table.rows.length; index++) {
     const cells = table.rows[index].c || [];
@@ -191,23 +199,28 @@ function parseSoldGvizTable(table) {
       || cleanText(row.unidadvendidas)
       || cleanText(row.unidad)
       || cleanText(row.nombre)
-      || getCellValue(cells[0]);
+      || getCellValue(cells[titleColumnIndex >= 0 ? titleColumnIndex : 0]);
     const image1 = normalizeSinglePhoto(row.foto1)
       || normalizeSinglePhoto(row.imagen1)
-      || normalizeSinglePhoto(getCellValue(cells[1]));
+      || normalizeSinglePhoto(getCellValue(cells[image1ColumnIndex >= 0 ? image1ColumnIndex : 1]));
     const image2 = normalizeSinglePhoto(row.foto2)
       || normalizeSinglePhoto(row.imagen2)
-      || normalizeSinglePhoto(getCellValue(cells[2]));
-    const comment = cleanText(row.comentario) || cleanText(getCellValue(cells[3]));
+      || (hasSecondImageColumn ? normalizeSinglePhoto(getCellValue(cells[image2ColumnIndex])) : '');
+    const comment = cleanText(row.comentario)
+      || cleanText(row.comentarios)
+      || cleanText(row.comentariocliente)
+      || cleanText(row.observacion)
+      || cleanText(row.observaciones)
+      || cleanText(row.descripcion)
+      || cleanText(getCellValue(cells[fallbackCommentColumnIndex]));
     const normalizedTitle = normalizeHeader(title);
     const normalizedImage1 = normalizeHeader(image1);
     const normalizedImage2 = normalizeHeader(image2);
 
-    const looksLikeHeaderRow = (
-      ['unidadesvendidas', 'unidadvendida', 'unidad', 'nombre'].includes(normalizedTitle)
-      && ['foto1', 'imagen1', ''].includes(normalizedImage1)
-      && ['foto2', 'imagen2', ''].includes(normalizedImage2)
-    );
+    const titleLooksLikeHeader = ['unidadesvendidas', 'unidadvendida', 'unidad', 'nombre'].includes(normalizedTitle);
+    const image1LooksLikeHeader = ['foto1', 'imagen1', 'foto', 'imagen', ''].includes(normalizedImage1);
+    const image2LooksLikeHeader = ['foto2', 'imagen2', 'foto', 'imagen', 'comentario', 'comentarios', ''].includes(normalizedImage2);
+    const looksLikeHeaderRow = titleLooksLikeHeader && (image1LooksLikeHeader || image2LooksLikeHeader || (!image1 && !image2));
 
     if (looksLikeHeaderRow) {
       continue;

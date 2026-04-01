@@ -14,10 +14,10 @@ let currentPhotoIndex = 0;
 let featuredVehicleId = null;
 let viewMode = 'large';
 let currentPage = 1;
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 9;
 let soldVehicles = [];
 let soldCurrentPage = 1;
-const SOLD_PAGE_SIZE = 6;
+const SOLD_PAGE_SIZE = 9;
 
 const vehiclesGrid = document.getElementById('vehiclesGrid');
 const loading = document.getElementById('loading');
@@ -853,6 +853,7 @@ function vehicleHeading(vehicle) {
 
 function getVehicleCoverPosition(vehicle, context = 'card') {
   const key = normalizeVehicleKey(vehicleHeading(vehicle));
+  const versionKey = normalizeVehicleKey(`${vehicleHeading(vehicle)} ${vehicle.version}`);
 
   if (context === 'featured') {
     const featuredPositions = {
@@ -870,6 +871,10 @@ function getVehicleCoverPosition(vehicle, context = 'card') {
     return modalPositions[key] || '50%';
   }
 
+  if (versionKey === 'citroen c3 origen') {
+    return '58%';
+  }
+
   const cardPositions = {
     'peugeot 208': '62%',
     'zontes t2': '52%',
@@ -878,7 +883,7 @@ function getVehicleCoverPosition(vehicle, context = 'card') {
     'jeep renegade': '62%',
     'chevrolet cruze': '66%',
     'peugeot 2008': '66%',
-    'citroen c3': '85%',
+    'citroen c3': '78%',
   };
 
   return cardPositions[key] || '58%';

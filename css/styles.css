@@ -1756,6 +1756,10 @@ img {
   transform: translate(-50%, -50%) scale(1);
 }
 
+.vehicle-modal.sold-mode .modal-content {
+  padding-top: 34px;
+}
+
 .vehicle-modal .modal-close {
   position: absolute;
   top: 16px;

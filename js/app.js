@@ -8,6 +8,8 @@ let activeBrand = 'Todas';
 let searchTerm = '';
 let sortOption = 'featured';
 let currentVehicleId = null;
+let currentSoldVehicleId = null;
+let currentModalKind = 'vehicle';
 let currentPhotoIndex = 0;
 let featuredVehicleId = null;
 let viewMode = 'large';
@@ -400,7 +402,7 @@ function renderSoldVehicleCard(vehicle) {
   const photos = vehicle.photos.length ? vehicle.photos : [''];
 
   return `
-    <article class="sold-card">
+    <article class="sold-card" data-sold-id="${vehicle.id}">
       <div class="sold-media">
         <div class="sold-carousel-track" style="--sold-slides: ${photos.length};">
           ${photos.map((photo, index) => `
@@ -461,11 +463,18 @@ function handleVehicleGridClick(event) {
 }
 
 function handleSoldGridClick(event) {
-  const button = event.target.closest('[data-action]');
-  if (!button) return;
-
-  const card = button.closest('.sold-card');
+  const card = event.target.closest('.sold-card');
   if (!card) return;
+
+  const soldId = Number(card.dataset.soldId);
+  const soldVehicle = soldVehicles.find(item => item.id === soldId);
+  if (!soldVehicle) return;
+
+  const button = event.target.closest('[data-action]');
+  if (!button) {
+    openSoldVehicleModal(soldId);
+    return;
+  }
 
   const vehicleId = Number(button.dataset.id);
   const vehicle = soldVehicles.find(item => item.id === vehicleId);
@@ -499,7 +508,9 @@ function openVehicleModal(vehicleId) {
   const vehicle = findVehicle(vehicleId);
   if (!vehicle) return;
 
+  currentModalKind = 'vehicle';
   currentVehicleId = vehicleId;
+  currentSoldVehicleId = null;
   currentPhotoIndex = 0;
   renderVehicleModal(vehicle);
   vehicleModal.classList.add('open');
@@ -510,16 +521,38 @@ function openVehicleModal(vehicleId) {
 
 function closeVehicleModal() {
   resetModalImageZoom();
+  currentVehicleId = null;
+  currentSoldVehicleId = null;
+  currentModalKind = 'vehicle';
   vehicleModal.classList.remove('open');
   modalOverlay.classList.remove('open');
   vehicleModal.setAttribute('aria-hidden', 'true');
   document.body.classList.remove('modal-open');
 }
 
+function openSoldVehicleModal(vehicleId) {
+  const vehicle = soldVehicles.find(item => item.id === vehicleId);
+  if (!vehicle) return;
+
+  currentModalKind = 'sold';
+  currentSoldVehicleId = vehicleId;
+  currentVehicleId = null;
+  currentPhotoIndex = 0;
+  renderSoldVehicleModal(vehicle);
+  vehicleModal.classList.add('open');
+  modalOverlay.classList.add('open');
+  vehicleModal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-open');
+}
+
 function renderVehicleModal(vehicle) {
   const photos = vehicle.photos.length ? vehicle.photos : [''];
   const currentPhoto = photos[currentPhotoIndex] || photos[0] || '';
 
+  vehicleModal.classList.remove('sold-mode');
+  modalPrice.hidden = false;
+  modalSpecGrid.hidden = false;
+  modalWhatsappBtn.parentElement.hidden = false;
   modalType.textContent = vehicle.tipo;
   modalTitleText.textContent = vehicleHeading(vehicle);
   modalPrice.textContent = formatPrice(vehicle.precio);
@@ -563,6 +596,48 @@ function renderVehicleModal(vehicle) {
   updateGalleryArrows(photos.length);
 }
 
+function renderSoldVehicleModal(vehicle) {
+  const photos = vehicle.photos.length ? vehicle.photos : [''];
+  const currentPhoto = photos[currentPhotoIndex] || photos[0] || '';
+
+  vehicleModal.classList.add('sold-mode');
+  modalType.textContent = 'Vendido';
+  modalTitleText.textContent = vehicle.title;
+  modalPrice.hidden = true;
+  modalSpecGrid.hidden = true;
+  modalWhatsappBtn.parentElement.hidden = true;
+  modalMainMedia.style.setProperty('--modal-cover-position-y', '50%');
+
+  let img = modalMainMedia.querySelector('img');
+  if (currentPhoto) {
+    if (!img) {
+      img = document.createElement('img');
+      img.onerror = () => img.remove();
+      modalMainMedia.insertBefore(img, galleryPrev);
+    }
+    img.src = currentPhoto;
+    img.alt = vehicle.title;
+  } else if (img) {
+    img.remove();
+  }
+
+  resetModalImageZoom();
+
+  modalThumbs.innerHTML = photos.map((photo, index) => `
+    <button
+      type="button"
+      class="thumb-btn${index === currentPhotoIndex ? ' active' : ''}"
+      data-thumb-index="${index}"
+      aria-label="Ver foto ${index + 1}"
+    >
+      ${getThumbImageMarkup(photo, `${vehicle.title} foto ${index + 1}`)}
+    </button>
+  `).join('');
+
+  modalSpecGrid.innerHTML = '';
+  updateGalleryArrows(photos.length);
+}
+
 function handleThumbClick(event) {
   const button = event.target.closest('[data-thumb-index]');
   if (!button) return;
@@ -570,14 +645,14 @@ function handleThumbClick(event) {
 }
 
 function navigateGallery(direction) {
-  const vehicle = findVehicle(currentVehicleId);
+  const vehicle = getCurrentModalItem();
   if (!vehicle) return;
   const total = vehicle.photos.length || 1;
   goToPhoto((currentPhotoIndex + direction + total) % total);
 }
 
 function goToPhoto(newIndex) {
-  const vehicle = findVehicle(currentVehicleId);
+  const vehicle = getCurrentModalItem();
   if (!vehicle || newIndex === currentPhotoIndex) return;
 
   currentPhotoIndex = newIndex;
@@ -595,9 +670,10 @@ function goToPhoto(newIndex) {
   let img = modalMainMedia.querySelector('img');
   if (img) {
     img.src = newPhoto;
+    img.alt = currentModalKind === 'sold' ? vehicle.title : vehicleHeading(vehicle);
   } else if (newPhoto) {
     img = document.createElement('img');
-    img.alt = vehicleHeading(vehicle);
+    img.alt = currentModalKind === 'sold' ? vehicle.title : vehicleHeading(vehicle);
     img.onerror = () => img.remove();
     img.src = newPhoto;
     modalMainMedia.appendChild(img);
@@ -610,6 +686,14 @@ function goToPhoto(newIndex) {
 function updateGalleryArrows(total) {
   galleryPrev.classList.toggle('hidden', total <= 1);
   galleryNext.classList.toggle('hidden', total <= 1);
+}
+
+function getCurrentModalItem() {
+  if (currentModalKind === 'sold') {
+    return soldVehicles.find(item => item.id === currentSoldVehicleId) || null;
+  }
+
+  return findVehicle(currentVehicleId);
 }
 
 function handleModalImageZoomToggle(event) {

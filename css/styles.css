@@ -448,7 +448,9 @@ img {
 .selection-item-media > .image-placeholder,
 .selection-item-media > img,
 .thumb-btn > .image-placeholder,
-.thumb-btn > img {
+.thumb-btn > img,
+.sold-slide > .image-placeholder,
+.sold-slide > img {
   position: absolute;
   inset: 0;
   width: 100%;

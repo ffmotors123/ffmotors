@@ -197,7 +197,9 @@ function renderFilterButtons(container, options, activeValue) {
 }
 
 function renderHeroMetrics() {
-  heroCount.textContent = allVehicles.length.toString();
+  if (heroCount) {
+    heroCount.textContent = allVehicles.length.toString();
+  }
 
   const featured = getFeaturedVehicle();
   featuredVehicleId = featured ? featured.id : null;

@@ -126,14 +126,17 @@ img {
   width: 62px;
   height: 62px;
   border-radius: 999px;
-  background: #ffffff;
+  overflow: hidden;
+  background: transparent;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
 }
 
 .logo-image {
-  width: auto;
-  height: 48px;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  transform: scale(1);
 }
 
 .main-nav {
@@ -592,8 +595,9 @@ img {
 
 .benefits-strip {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(2, minmax(320px, 460px));
+  justify-content: center;
+  gap: 24px;
   margin-bottom: 28px;
 }
 
@@ -609,7 +613,8 @@ img {
 }
 
 .benefits-strip article {
-  padding: 26px;
+  min-height: 172px;
+  padding: 34px 32px;
   border-radius: 26px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background:
@@ -619,13 +624,15 @@ img {
 
 .benefits-strip strong {
   display: block;
-  font-size: 1.08rem;
+  font-size: 1.28rem;
   color: #fff;
 }
 
 .benefits-strip p {
-  margin-top: 10px;
+  margin-top: 14px;
   color: var(--text-soft);
+  font-size: 1.08rem;
+  line-height: 1.6;
 }
 
 .inventory-section,
@@ -1966,10 +1973,27 @@ img {
   border-top: 1px solid var(--line);
 }
 
-.footer-brand {
+.footer-brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.footer-brand-image {
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  object-fit: cover;
+  object-position: center center;
+  transform: scale(1);
+  background: transparent;
+}
+
+.footer-brand-text {
   font-family: 'Bebas Neue', cursive;
   font-size: 2.2rem;
   letter-spacing: 0.08em;
+  color: #fff;
 }
 
 .footer-copy {
@@ -2126,6 +2150,15 @@ img {
 
   .logo-image {
     height: 40px;
+  }
+
+  .footer-brand-image {
+    width: 58px;
+    height: 58px;
+  }
+
+  .footer-brand-text {
+    font-size: 1.9rem;
   }
 
   .hero {

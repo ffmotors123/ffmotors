@@ -18,6 +18,7 @@ const PAGE_SIZE = 9;
 let soldVehicles = [];
 let soldCurrentPage = 1;
 const SOLD_PAGE_SIZE = 9;
+const SOLD_MOBILE_PAGE_SIZE = 1;
 
 const vehiclesGrid = document.getElementById('vehiclesGrid');
 const loading = document.getElementById('loading');
@@ -121,6 +122,8 @@ function bindUI() {
     if (event.key === 'ArrowLeft') navigateGallery(-1);
     if (event.key === 'ArrowRight') navigateGallery(1);
   });
+
+  window.addEventListener('resize', handleResponsiveSoldPagination);
 }
 
 async function loadVehicles() {
@@ -252,6 +255,7 @@ function renderVehicles() {
 
 function renderSoldVehicles() {
   soldLoading.hidden = true;
+  const soldPageSize = getSoldPageSize();
 
   if (!soldVehicles.length) {
     soldVehiclesGrid.innerHTML = '';
@@ -262,10 +266,10 @@ function renderSoldVehicles() {
     return;
   }
 
-  const totalPages = Math.ceil(soldVehicles.length / SOLD_PAGE_SIZE);
+  const totalPages = Math.ceil(soldVehicles.length / soldPageSize);
   soldCurrentPage = Math.min(soldCurrentPage, totalPages || 1);
-  const start = (soldCurrentPage - 1) * SOLD_PAGE_SIZE;
-  const pageVehicles = soldVehicles.slice(start, start + SOLD_PAGE_SIZE);
+  const start = (soldCurrentPage - 1) * soldPageSize;
+  const pageVehicles = soldVehicles.slice(start, start + soldPageSize);
 
   soldEmptyState.hidden = true;
   soldSummary.textContent = `Mostrando ${pageVehicles.length} de ${soldVehicles.length} unidades vendidas`;
@@ -556,6 +560,15 @@ function renderSoldPagination(page, totalPages) {
     renderSoldVehicles();
     document.getElementById('vendidos').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
+}
+
+function getSoldPageSize() {
+  return window.matchMedia('(max-width: 640px)').matches ? SOLD_MOBILE_PAGE_SIZE : SOLD_PAGE_SIZE;
+}
+
+function handleResponsiveSoldPagination() {
+  if (!soldVehicles.length) return;
+  renderSoldVehicles();
 }
 
 function openVehicleModal(vehicleId) {

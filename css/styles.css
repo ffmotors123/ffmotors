@@ -2149,12 +2149,15 @@ img {
   }
 
   .logo-image {
-    height: 40px;
+    width: 100%;
+    height: 100%;
+    transform: scale(1.22);
   }
 
   .footer-brand-image {
     width: 58px;
     height: 58px;
+    transform: scale(1.22);
   }
 
   .footer-brand-text {

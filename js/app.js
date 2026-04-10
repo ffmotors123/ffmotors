@@ -398,6 +398,7 @@ function renderVehicleCard(vehicle) {
           ${renderSpecPill(vehicle.combustible)}
           ${renderSpecPill(vehicle.transmision)}
           ${renderSpecPill(vehicle.tipo)}
+          ${renderSpecPill(`Financia / usado: ${vehicle.financiarRecibirUsado || 'No informado'}`)}
         </div>
 
         <div class="vehicle-footer">
@@ -660,6 +661,7 @@ function renderVehicleModal(vehicle) {
     buildSpecCard('Color', vehicle.color),
     buildSpecCard('Combustible', vehicle.combustible),
     buildSpecCard('Transmision', vehicle.transmision),
+    buildSpecCard('Financia / recibe usado', vehicle.financiarRecibirUsado),
   ].join('');
 
   updateGalleryArrows(photos.length);
@@ -819,6 +821,7 @@ function buildSingleVehicleMessage(vehicle) {
     `${vehicleHeading(vehicle)} - ${vehicle.version}`,
     buildVehicleSummary(vehicle),
     `Precio: ${formatPrice(vehicle.precio)}`,
+    `Financia / recibe usado: ${vehicle.financiarRecibirUsado || 'No informado'}`,
   ];
 
   return lines.join('\n');

@@ -5,7 +5,7 @@
 /*
  * Columnas esperadas:
  * tipo | marca | modelo | version | ano | km | color | combustible |
- * transmision | precio | foto1 ... foto15
+ * transmision | precio | financiar / recibir usado | foto1 ... foto15
  */
 
 async function fetchVehiclesFromSheet() {
@@ -139,6 +139,7 @@ function parseGvizTable(table) {
     const year = parseInteger(row.ano);
     const km = parseInteger(row.km);
     const precio = parseInteger(row.precio);
+    const financiarRecibirUsado = getFinancingTradeInValue(row);
 
     vehicles.push({
       id: index + 1,
@@ -152,6 +153,7 @@ function parseGvizTable(table) {
       combustible: cleanText(row.combustible) || 'No informado',
       transmision: cleanText(row.transmision) || 'No informado',
       precio,
+      financiarRecibirUsado,
       photos,
       coverPhoto,
       title: `${marca} ${modelo}`.trim(),
@@ -165,6 +167,7 @@ function parseGvizTable(table) {
         cleanText(row.color),
         cleanText(row.combustible),
         cleanText(row.transmision),
+        financiarRecibirUsado,
       ].join(' ').toLowerCase(),
     });
   }
@@ -250,7 +253,34 @@ function normalizeHeader(value) {
     .trim()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[\s_-]+/g, '');
+    .replace(/[^a-z0-9]+/g, '');
+}
+
+function getFinancingTradeInValue(row) {
+  const rawValue = cleanText(
+    row.financiarrecibirusado
+    || row.financiarusado
+    || row.financiarrecibirusado
+    || row.recibirusado
+    || row.financiacion
+    || row.permuta
+  );
+
+  if (!rawValue) {
+    return 'No informado';
+  }
+
+  const normalized = normalizeHeader(rawValue);
+
+  if (['si', 'sí', 'yes', 'true', '1'].includes(normalized)) {
+    return 'Si';
+  }
+
+  if (['no', 'false', '0'].includes(normalized)) {
+    return 'No';
+  }
+
+  return rawValue;
 }
 
 function getCellValue(cell) {

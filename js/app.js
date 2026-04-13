@@ -894,7 +894,7 @@ function getVehicleCoverPosition(vehicle, context = 'card') {
   }
 
   const cardPositions = {
-    'peugeot 208': '62%',
+    'peugeot 208': '72%',
     'zontes t2': '52%',
     'fiat strada': '62%',
     'toyota yaris': '62%',

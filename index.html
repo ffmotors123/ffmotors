@@ -50,13 +50,25 @@
     <section class="hero" id="inicio">
       <div class="hero-copy">
         <p class="eyebrow">Usados seleccionados | gestion simple | atencion directa</p>
+        <h1 class="hero-title-custom">
+          <span>compra mejor</span>
+          <span>vende mas facil</span>
+        </h1>
         <h1>Vendé tu auto sin hacer nada.</h1>
         <p class="hero-text">
-          Publicamos, mostramos y cerramos la venta por vos. Al mejor precio y SIN moverte.
+          Gestionamos ventas, buscamos vehículos a medida y realizamos peritajes precompra para que tomes decisiones con seguridad.
         </p>
 
-        <div class="hero-actions">
-          <a href="#catalogo" class="primary-btn">Ver stock disponible</a>
+        <div class="hero-actions" id="heroActions">
+          <button class="hero-cta-card" type="button" data-service-message="Hola FF Motors, quiero vender mi auto. Me gustaria recibir informacion sobre el servicio de venta integral de vehiculos.">
+            <span>Quiero vender mi auto</span>
+          </button>
+          <button class="hero-cta-card" type="button" data-service-message="Hola FF Motors, busco un auto y me interesa el servicio de busqueda personalizada de vehiculos.">
+            <span>Busco un auto</span>
+          </button>
+          <button class="hero-cta-card" type="button" data-service-message="Hola FF Motors, quiero solicitar un peritaje y revision precompra para un vehiculo.">
+            <span>Solicitar peritaje</span>
+          </button>
         </div>
       </div>
 
@@ -97,13 +109,18 @@
     </section>
 
     <section class="benefits-strip">
-      <article>
-        <strong>Ingreso rapido</strong>
+      <article class="benefit-cta-card">
+        <strong>Quiero vender mi auto</strong>
+        <p class="benefit-cta-copy">Te acompanamos en todo el proceso de venta con atencion personalizada.</p>
         <p>Explora el stock con busqueda, filtros y orden por precio, año o kilometraje.</p>
       </article>
-      <article>
-        <strong>Presentacion clara</strong>
-        <p>Cada unidad muestra modelo, version, combustible, transmision, color y precio.</p>
+      <article class="benefit-cta-card">
+        <strong>Busco un auto</strong>
+        <p>Encontramos opciones a medida segun tus necesidades y presupuesto.</p>
+      </article>
+      <article class="benefit-cta-card">
+        <strong>Solicitar peritaje</strong>
+        <p>Revisamos el vehiculo antes de comprar para que avances con tranquilidad.</p>
       </article>
     </section>
 
@@ -232,33 +249,42 @@
           <article class="service-card service-card--media">
             <div class="service-card-body">
               <span class="service-number">01</span>
-              <h3>Servicio de venta de tu vehiculo</h3>
-              <p>Publicamos tu unidad, la mostramos de forma profesional y te ayudamos a gestionar consultas de potenciales compradores.</p>
+              <h3>Venta integral de vehiculos</h3>
+              <p>Nos encargamos de vender tu auto de principio a fin. Publicacion, atencion de consultas, coordinacion de visitas, negociacion y acompanamiento durante todo el proceso.</p>
+              <button class="service-cta" type="button" data-service-message="Hola FF Motors, quiero vender mi auto. Me gustaria recibir informacion sobre el servicio de venta integral de vehiculos.">
+                Quiero vender mi auto
+              </button>
             </div>
             <div class="service-card-image">
-              <img src="img/venta-vehiculo.jpg" alt="Servicio de venta de vehiculo">
+              <img src="img/venta-integral-vehiculos.jpg" alt="Entrega de llaves en una venta de vehiculo">
             </div>
           </article>
 
           <article class="service-card service-card--media">
             <div class="service-card-body">
               <span class="service-number">02</span>
-              <h3>Servicio de peritaje a domicilio</h3>
-              <p>Evaluamos el vehiculo donde te quede comodo para brindarte una revision clara y agil antes de avanzar con la operacion.</p>
+              <h3>Busqueda personalizada de vehiculos</h3>
+              <p>Encontramos el auto que estas buscando segun tus necesidades, preferencias y presupuesto. Filtramos opciones y te acompanamos para que ahorres tiempo y evites malas decisiones.</p>
+              <button class="service-cta" type="button" data-service-message="Hola FF Motors, busco un auto y me interesa el servicio de busqueda personalizada de vehiculos.">
+                Busco un auto
+              </button>
             </div>
             <div class="service-card-image">
-              <img src="img/peritaje.jpeg" alt="Peritaje a domicilio">
+              <img src="img/peritaje-revision-precompra.webp" alt="Ilustracion de busqueda de vehiculos con lupa">
             </div>
           </article>
 
           <article class="service-card service-card--media">
             <div class="service-card-body">
               <span class="service-number">03</span>
-              <h3>Lavado Premium</h3>
-              <p>Dejamos tu auto impecable, con limpieza profunda interior y exterior, terminaciones cuidadas y una presentacion lista para lucirse en fotos o entregas.</p>
+              <h3>Peritaje y revision precompra</h3>
+              <p>Inspeccionamos vehiculos para compradores que ya tienen opciones vistas pero no cuentan con conocimientos mecanicos. Evaluamos el estado general y detectamos posibles fallas o detalles ocultos antes de comprar.</p>
+              <button class="service-cta" type="button" data-service-message="Hola FF Motors, quiero solicitar un peritaje y revision precompra para un vehiculo.">
+                Solicitar peritaje
+              </button>
             </div>
             <div class="service-card-image">
-              <img src="img/lavado-premium.jpg" alt="Lavado Premium">
+              <img src="img/peritaje-revision-precompra.jpg" alt="Equipo de diagnostico conectado para peritaje vehicular">
             </div>
           </article>
         </div>

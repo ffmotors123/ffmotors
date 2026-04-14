@@ -58,6 +58,8 @@ const heroCount = document.getElementById('heroCount');
 const featuredHighlights = document.getElementById('featuredHighlights');
 const headerWhatsappLink = document.getElementById('headerWhatsappLink');
 const footerWhatsappLink = document.getElementById('footerWhatsappLink');
+const heroActions = document.getElementById('heroActions');
+const servicesTrack = document.getElementById('servicesTrack');
 
 document.addEventListener('DOMContentLoaded', () => {
   bindUI();
@@ -100,6 +102,8 @@ function bindUI() {
 
   vehiclesGrid.addEventListener('click', handleVehicleGridClick);
   soldVehiclesGrid.addEventListener('click', handleSoldGridClick);
+  heroActions?.addEventListener('click', handleServiceCtaClick);
+  servicesTrack?.addEventListener('click', handleServiceCtaClick);
 
   featuredActionBtn.addEventListener('click', () => {
     if (featuredVehicleId) {
@@ -857,6 +861,13 @@ function openWhatsApp(message) {
   window.open(url, '_blank', 'noopener');
 }
 
+function handleServiceCtaClick(event) {
+  const button = event.target.closest('[data-service-message]');
+  if (!button) return;
+
+  openWhatsApp(button.dataset.serviceMessage || 'Hola FF Motors');
+}
+
 function getFeaturedVehicle() {
   return sortVehicles(allVehicles)[0] || null;
 }
@@ -1147,7 +1158,7 @@ function initServicesCarousel() {
   });
 
   function startAutoplay() {
-    autoplayTimer = setInterval(() => goTo(current + 1), 3000);
+    autoplayTimer = setInterval(() => goTo(current + 1), 6000);
   }
 
   function resetAutoplay() {

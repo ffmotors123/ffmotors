@@ -14,6 +14,7 @@ let currentPhotoIndex = 0;
 let featuredVehicleId = null;
 let viewMode = 'large';
 let currentPage = 1;
+let servicesCarouselApi = null;
 const PAGE_SIZE = 9;
 let soldVehicles = [];
 let soldCurrentPage = 1;
@@ -863,9 +864,35 @@ function openWhatsApp(message) {
 
 function handleServiceCtaClick(event) {
   const button = event.target.closest('[data-service-message]');
+  const serviceButton = event.target.closest('[data-service-index]');
+
+  if (serviceButton) {
+    revealServiceSlide(Number(serviceButton.dataset.serviceIndex));
+    return;
+  }
+
   if (!button) return;
 
   openWhatsApp(button.dataset.serviceMessage || 'Hola FF Motors');
+}
+
+function revealServiceSlide(serviceIndex) {
+  const servicesSection = document.getElementById('servicios');
+  if (!servicesSection || Number.isNaN(serviceIndex)) return;
+
+  servicesCarouselApi?.goToRealSlide(serviceIndex);
+  scrollToSectionWithOffset(servicesSection);
+}
+
+function scrollToSectionWithOffset(section) {
+  const header = document.querySelector('.site-header');
+  const headerOffset = header ? header.offsetHeight + 18 : 18;
+  const top = section.getBoundingClientRect().top + window.scrollY - headerOffset;
+
+  window.scrollTo({
+    top: Math.max(0, top),
+    behavior: 'smooth',
+  });
 }
 
 function getFeaturedVehicle() {
@@ -1168,6 +1195,22 @@ function initServicesCarousel() {
 
   setPosition(current, false);
   updateDots(current);
+
+  servicesCarouselApi = {
+    goToRealSlide(realIndex) {
+      if (realIndex < 0 || realIndex >= total) return;
+      if (isAnimating) {
+        current = realIndex + 1;
+        setPosition(current, false);
+        updateDots(current);
+        isAnimating = false;
+        return;
+      }
+
+      goTo(realIndex + 1);
+      resetAutoplay();
+    },
+  };
 
   prev.addEventListener('click', () => { goTo(current - 1); resetAutoplay(); });
   next.addEventListener('click', () => { goTo(current + 1); resetAutoplay(); });

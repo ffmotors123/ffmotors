@@ -373,6 +373,7 @@ function numericSort(firstValue, secondValue, desc = false) {
 function renderVehicleCard(vehicle) {
   const coverPosition = getVehicleCoverPosition(vehicle, 'card');
   const coverScale = getVehicleCoverScale(vehicle, 'card');
+  const characteristicsMarkup = getVehicleCharacteristics(vehicle).map(renderSpecPill).join('');
 
   return `
     <article class="vehicle-card" data-action="open-modal" data-id="${vehicle.id}">
@@ -404,11 +405,11 @@ function renderVehicleCard(vehicle) {
           ${renderSpecPill(vehicle.transmision)}
           ${renderSpecPill(vehicle.tipo)}
           ${renderSpecPill(`Financia / usado: ${vehicle.financiarRecibirUsado || 'No informado'}`)}
+          ${characteristicsMarkup}
         </div>
 
         <div class="vehicle-footer">
           <div>
-            <span class="vehicle-price-label">Precio publicado</span>
             <strong class="vehicle-price">${formatPrice(vehicle.precio)}</strong>
           </div>
 
@@ -667,6 +668,7 @@ function renderVehicleModal(vehicle) {
     buildSpecCard('Combustible', vehicle.combustible),
     buildSpecCard('Transmision', vehicle.transmision),
     buildSpecCard('Financia / recibe usado', vehicle.financiarRecibirUsado),
+    ...getVehicleCharacteristics(vehicle).map(buildCharacteristicSpecCard),
   ].join('');
 
   updateGalleryArrows(photos.length);
@@ -851,6 +853,24 @@ function buildSpecCard(label, value) {
   `;
 }
 
+function buildCharacteristicSpecCard(entry) {
+  const { label, value } = splitCharacteristicEntry(entry);
+  return buildSpecCard(label, value);
+}
+
+function splitCharacteristicEntry(entry) {
+  const [label, ...rest] = String(entry || '').split(':');
+
+  if (!rest.length) {
+    return { label: 'Caracteristica', value: entry || 'No informado' };
+  }
+
+  return {
+    label: label.trim() || 'Caracteristica',
+    value: rest.join(':').trim() || 'No informado',
+  };
+}
+
 function syncContactLinks() {
   const url = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}`;
   headerWhatsappLink.href = url;
@@ -934,12 +954,13 @@ function getVehicleCoverPosition(vehicle, context = 'card') {
   const cardPositions = {
     'peugeot 208': '72%',
     'zontes t2': '52%',
-    'fiat strada': '62%',
+    'fiat strada': '70%',
     'toyota yaris': '62%',
     'jeep renegade': '62%',
     'chevrolet cruze': '66%',
     'peugeot 2008': '66%',
-    'citroen c3': '78%',
+    'citroen c3': '84%',
+    'volkswagen gol': '79%',
   };
 
   return cardPositions[key] || '58%';
@@ -986,6 +1007,14 @@ function getSoldVehicleCoverScale(vehicle) {
   };
 
   return soldScales[key] || '1.16';
+}
+
+function getVehicleCharacteristics(vehicle) {
+  if (Array.isArray(vehicle?.characteristics) && vehicle.characteristics.length) {
+    return vehicle.characteristics;
+  }
+ 
+  return [];
 }
 
 function normalizeVehicleKey(value) {

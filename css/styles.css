@@ -1390,8 +1390,10 @@ img {
 
 .vehicle-spec-strip {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: 0.74fr 1.24fr 1.02fr;
   gap: 10px;
+  width: 100%;
+  justify-self: center;
 }
 
 .vehicle-stat {
@@ -1399,12 +1401,20 @@ img {
   border-radius: 16px;
   background: #f4f7fb;
   border: 1px solid rgba(9, 24, 42, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .vehicle-stat strong {
   display: block;
   color: #0c1930;
   font-size: 1rem;
+}
+
+.vehicle-spec-strip .vehicle-stat:nth-child(2) strong {
+  white-space: nowrap;
 }
 
 .vehicle-stat span {
@@ -1420,6 +1430,16 @@ img {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  justify-content: center;
+  width: 100%;
+}
+
+.vehicle-meta .spec-pill {
+  flex: 1 1 calc(33.333% - 10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .spec-pill {

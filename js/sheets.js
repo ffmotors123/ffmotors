@@ -140,6 +140,7 @@ function parseGvizTable(table) {
     const km = parseInteger(row.km);
     const precio = parseInteger(row.precio);
     const financiarRecibirUsado = getFinancingTradeInValue(row);
+    const characteristics = getVehicleCharacteristicsFromRow(row);
 
     vehicles.push({
       id: index + 1,
@@ -154,6 +155,7 @@ function parseGvizTable(table) {
       transmision: cleanText(row.transmision) || 'No informado',
       precio,
       financiarRecibirUsado,
+      characteristics,
       photos,
       coverPhoto,
       title: `${marca} ${modelo}`.trim(),
@@ -168,6 +170,7 @@ function parseGvizTable(table) {
         cleanText(row.combustible),
         cleanText(row.transmision),
         financiarRecibirUsado,
+        characteristics.join(' '),
       ].join(' ').toLowerCase(),
     });
   }
@@ -281,6 +284,25 @@ function getFinancingTradeInValue(row) {
   }
 
   return rawValue;
+}
+
+function getVehicleCharacteristicsFromRow(row) {
+  const characteristics = [];
+  const gncValue = cleanText(row.gnc);
+
+  if (gncValue) {
+    const normalized = normalizeHeader(gncValue);
+
+    if (['si', 'sÃ­', 'yes', 'true', '1'].includes(normalized)) {
+      characteristics.push('GNC: Si');
+    } else if (['no', 'false', '0'].includes(normalized)) {
+      characteristics.push('GNC: No');
+    } else {
+      characteristics.push(`GNC: ${gncValue}`);
+    }
+  }
+
+  return characteristics;
 }
 
 function getCellValue(cell) {

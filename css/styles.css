@@ -1390,7 +1390,7 @@ img {
 
 .vehicle-spec-strip {
   display: grid;
-  grid-template-columns: 0.74fr 1.24fr 1.02fr;
+  grid-template-columns: 0.88fr 1.12fr;
   gap: 10px;
   width: 100%;
   justify-self: center;
@@ -2264,13 +2264,26 @@ img {
   }
 
   .hero h1 {
-    font-size: clamp(2.9rem, 16vw, 4.4rem);
+    font-size: clamp(2.75rem, 15vw, 4.15rem);
   }
 
   .featured-body,
   .benefits-strip article,
   .service-card {
     padding: 20px;
+  }
+
+  .featured-body {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .featured-highlights {
+    justify-content: center;
+  }
+
+  .featured-footer > div {
+    text-align: center;
   }
 
   .hero-cta-card {
@@ -2285,6 +2298,42 @@ img {
 
   .vehicles-grid {
     grid-template-columns: 1fr;
+  }
+
+  .vehicle-body {
+    gap: 14px;
+  }
+
+  .vehicle-spec-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .vehicle-stat {
+    padding: 10px 8px;
+    min-height: 58px;
+  }
+
+  .vehicle-stat strong {
+    font-size: 0.94rem;
+  }
+
+  .vehicle-meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .vehicle-meta .spec-pill {
+    min-width: 0;
+    padding: 8px 6px;
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
+
+  .vehicle-meta .spec-pill-wide {
+    grid-column: span 2;
+    white-space: nowrap;
   }
 
   .sold-grid {

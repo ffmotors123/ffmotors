@@ -216,7 +216,8 @@ function renderHeroMetrics() {
     featuredTitle.textContent = 'Sin unidades publicadas';
     featuredPrice.textContent = '--';
     featuredMedia.innerHTML = getMainImageMarkup('', 'Sin unidades');
-    featuredHighlights.innerHTML = '<span>Google Sheets</span><span>Catalogo visual</span><span>WhatsApp</span>';
+    featuredHighlights.innerHTML = '';
+    featuredHighlights.hidden = true;
     featuredActionBtn.textContent = 'Sin stock';
     return;
   }
@@ -225,13 +226,8 @@ function renderHeroMetrics() {
   featuredPrice.textContent = formatPrice(featured.precio);
   featuredMedia.style.setProperty('--cover-position-y', getVehicleCoverPosition(featured, 'featured'));
   featuredMedia.innerHTML = getMainImageMarkup(featured.coverPhoto, vehicleHeading(featured));
-  featuredHighlights.innerHTML = [
-    featured.tipo,
-    formatYear(featured.year),
-    formatKm(featured.km),
-    featured.combustible,
-    featured.transmision,
-  ].map(label => `<span>${escapeHTML(label)}</span>`).join('');
+  featuredHighlights.innerHTML = '';
+  featuredHighlights.hidden = true;
   featuredActionBtn.textContent = 'Ver ficha';
 }
 
@@ -395,16 +391,13 @@ function renderVehicleCard(vehicle) {
           <div class="vehicle-stat">
             <strong>${escapeHTML(formatKm(vehicle.km))}</strong>
           </div>
-          <div class="vehicle-stat">
-            <strong>${escapeHTML(vehicle.color)}</strong>
-          </div>
         </div>
 
         <div class="vehicle-meta">
           ${renderSpecPill(vehicle.combustible)}
           ${renderSpecPill(vehicle.transmision)}
           ${renderSpecPill(vehicle.tipo)}
-          ${renderSpecPill(`Financia / usado: ${vehicle.financiarRecibirUsado || 'No informado'}`)}
+          ${renderWideSpecPill(`Financia / usado: ${vehicle.financiarRecibirUsado || 'No informado'}`)}
           ${characteristicsMarkup}
         </div>
 
@@ -470,6 +463,10 @@ function renderSoldVehicleCard(vehicle) {
 
 function renderSpecPill(label) {
   return `<span class="spec-pill">${escapeHTML(label || 'No informado')}</span>`;
+}
+
+function renderWideSpecPill(label) {
+  return `<span class="spec-pill spec-pill-wide">${escapeHTML(label || 'No informado')}</span>`;
 }
 
 function updateResultsSummary(visibleVehicles) {
@@ -664,7 +661,6 @@ function renderVehicleModal(vehicle) {
     buildSpecCard('Version', vehicle.version),
     buildSpecCard('Año', formatYear(vehicle.year)),
     buildSpecCard('Kilometraje', vehicle.km ? vehicle.km.toLocaleString('es-AR') : 'No informado'),
-    buildSpecCard('Color', vehicle.color),
     buildSpecCard('Combustible', vehicle.combustible),
     buildSpecCard('Transmision', vehicle.transmision),
     buildSpecCard('Financia / recibe usado', vehicle.financiarRecibirUsado),
@@ -840,7 +836,6 @@ function buildVehicleSummary(vehicle) {
     formatKm(vehicle.km),
     vehicle.combustible,
     vehicle.transmision,
-    vehicle.color,
   ].filter(Boolean).join(' | ');
 }
 

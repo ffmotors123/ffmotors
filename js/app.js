@@ -955,6 +955,7 @@ function getVehicleCoverPosition(vehicle, context = 'card') {
     'chevrolet cruze': '66%',
     'peugeot 2008': '66%',
     'citroen c3': '84%',
+    'citroen c4': '76%',
     'volkswagen gol': '79%',
     'volkswagen amarok': '86%',
   };

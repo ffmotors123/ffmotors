@@ -439,6 +439,8 @@ img {
 .featured-unit {
   position: relative;
   z-index: 1;
+  width: min(100%, 520px);
+  justify-self: center;
   overflow: hidden;
   border-radius: var(--radius-xl);
   border: 1px solid rgba(255, 255, 255, 0.09);
@@ -460,7 +462,7 @@ img {
 
 .featured-media {
   position: relative;
-  min-height: 340px;
+  aspect-ratio: 4 / 3;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 48%),
     linear-gradient(180deg, #0c1626 0%, #12233c 100%);
@@ -535,6 +537,13 @@ img {
 .modal-content h3 {
   font-size: clamp(2rem, 4vw, 2.8rem);
   line-height: 1.02;
+}
+
+.featured-subtitle {
+  margin-top: -8px;
+  color: var(--text-soft);
+  font-size: 1.05rem;
+  font-weight: 600;
 }
 
 .featured-specs {

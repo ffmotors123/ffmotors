@@ -52,6 +52,7 @@ const modalWhatsappBtn = document.getElementById('modalWhatsappBtn');
 const modalActions = modalWhatsappBtn.closest('.modal-actions');
 
 const featuredTitle = document.getElementById('featuredTitle');
+const featuredSubtitle = document.getElementById('featuredSubtitle');
 const featuredPrice = document.getElementById('featuredPrice');
 const featuredMedia = document.getElementById('featuredMedia');
 const featuredActionBtn = document.getElementById('featuredActionBtn');
@@ -214,6 +215,7 @@ function renderHeroMetrics() {
 
   if (!featured) {
     featuredTitle.textContent = 'Sin unidades publicadas';
+    featuredSubtitle.textContent = '';
     featuredPrice.textContent = '--';
     featuredMedia.innerHTML = getMainImageMarkup('', 'Sin unidades');
     featuredHighlights.innerHTML = '';
@@ -223,6 +225,7 @@ function renderHeroMetrics() {
   }
 
   featuredTitle.textContent = vehicleHeading(featured);
+  featuredSubtitle.textContent = featured.version || '';
   featuredPrice.textContent = formatPrice(featured.precio);
   featuredMedia.style.setProperty('--cover-position-y', getVehicleCoverPosition(featured, 'featured'));
   featuredMedia.innerHTML = getMainImageMarkup(featured.coverPhoto, vehicleHeading(featured));
@@ -911,7 +914,12 @@ function scrollToSectionWithOffset(section) {
 }
 
 function getFeaturedVehicle() {
-  return sortVehicles(allVehicles)[0] || null;
+  const preferredFeatured = allVehicles.find(vehicle => {
+    const label = normalizeVehicleKey(`${vehicleHeading(vehicle)} ${vehicle.version}`);
+    return label.includes('c4 lounge');
+  });
+
+  return preferredFeatured || sortVehicles(allVehicles)[0] || null;
 }
 
 function findVehicle(vehicleId) {
@@ -929,6 +937,7 @@ function getVehicleCoverPosition(vehicle, context = 'card') {
   if (context === 'featured') {
     const featuredPositions = {
       'peugeot 208': '64%',
+      'citroen c4': '76%',
     };
 
     return featuredPositions[key] || '64%';
@@ -954,6 +963,7 @@ function getVehicleCoverPosition(vehicle, context = 'card') {
     'jeep renegade': '62%',
     'chevrolet cruze': '66%',
     'peugeot 2008': '66%',
+    'ford kuga': '70%',
     'citroen c3': '84%',
     'citroen c4': '76%',
     'volkswagen gol': '79%',

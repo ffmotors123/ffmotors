@@ -1355,8 +1355,11 @@ img {
 .vehicle-badge {
   top: 16px;
   left: 16px;
-  background: rgba(6, 17, 31, 0.88);
+  gap: 8px;
+  background: rgba(27, 184, 105, 0.95);
   color: #fff;
+  font-weight: 700;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
 }
 
 .gallery-count {

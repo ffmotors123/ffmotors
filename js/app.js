@@ -226,7 +226,7 @@ function renderHeroMetrics() {
 
   featuredTitle.textContent = vehicleHeading(featured);
   featuredSubtitle.textContent = featured.version || '';
-  featuredPrice.textContent = formatPrice(featured.precio);
+  featuredPrice.textContent = formatPrice(featured.precio, featured.precioCurrency);
   featuredMedia.style.setProperty('--cover-position-y', getVehicleCoverPosition(featured, 'featured'));
   featuredMedia.innerHTML = getMainImageMarkup(featured.coverPhoto, vehicleHeading(featured));
   featuredHighlights.innerHTML = '';
@@ -378,6 +378,7 @@ function renderVehicleCard(vehicle) {
     <article class="vehicle-card" data-action="open-modal" data-id="${vehicle.id}">
       <div class="vehicle-media" style="--cover-position-y: ${escapeAttr(coverPosition)}; --cover-scale: ${escapeAttr(coverScale)};">
         ${getMainImageMarkup(vehicle.coverPhoto, vehicleHeading(vehicle))}
+        <span class="vehicle-badge">✓ Verif. policial</span>
         <span class="gallery-count">${vehicle.photos.length} fotos</span>
       </div>
 
@@ -406,7 +407,7 @@ function renderVehicleCard(vehicle) {
 
         <div class="vehicle-footer">
           <div>
-            <strong class="vehicle-price">${formatPrice(vehicle.precio)}</strong>
+            <strong class="vehicle-price">${formatPrice(vehicle.precio, vehicle.precioCurrency)}</strong>
           </div>
 
           <div class="vehicle-actions">
@@ -631,7 +632,7 @@ function renderVehicleModal(vehicle) {
   modalComment.textContent = '';
   modalType.textContent = vehicle.tipo;
   modalTitleText.textContent = vehicleHeading(vehicle);
-  modalPrice.textContent = formatPrice(vehicle.precio);
+  modalPrice.textContent = formatPrice(vehicle.precio, vehicle.precioCurrency);
   modalMainMedia.style.setProperty('--modal-cover-position-y', getVehicleCoverPosition(vehicle, 'modal'));
 
   let img = modalMainMedia.querySelector('img');
@@ -826,7 +827,7 @@ function buildSingleVehicleMessage(vehicle) {
     '',
     `${vehicleHeading(vehicle)} - ${vehicle.version}`,
     buildVehicleSummary(vehicle),
-    `Precio: ${formatPrice(vehicle.precio)}`,
+    `Precio: ${formatPrice(vehicle.precio, vehicle.precioCurrency)}`,
     `Financia / recibe usado: ${vehicle.financiarRecibirUsado || 'No informado'}`,
   ];
 
@@ -966,7 +967,7 @@ function getVehicleCoverPosition(vehicle, context = 'card') {
     'ford kuga': '70%',
     'citroen c3': '84%',
     'citroen c4': '76%',
-    'volkswagen gol': '79%',
+    'volkswagen gol': '75%',
     'volkswagen amarok': '86%',
   };
 
@@ -1032,12 +1033,21 @@ function normalizeVehicleKey(value) {
     .replace(/[\u0300-\u036f]/g, '');
 }
 
-function formatPrice(price) {
-  if (!price) {
+function formatPrice(price, currency = '') {
+  if (price === null || price === undefined || price === '') {
     return 'Precio a consultar';
   }
 
-  return `${CONFIG.CURRENCY}${price.toLocaleString('es-AR')}`;
+  const numericValue = typeof price === 'number'
+    ? price
+    : Number(String(price).replace(/[^\d.-]/g, ''));
+
+  if (!Number.isFinite(numericValue)) {
+    return 'Precio a consultar';
+  }
+
+  const currencyLabel = currency === 'USD' ? 'USD ' : CONFIG.CURRENCY;
+  return `${currencyLabel}${numericValue.toLocaleString('es-AR')}`;
 }
 
 function formatYear(year) {

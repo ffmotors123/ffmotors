@@ -35,6 +35,7 @@ class SelectionStore {
       year: vehicle.year,
       km: vehicle.km,
       precio: vehicle.precio,
+      precioCurrency: vehicle.precioCurrency,
       coverPhoto: vehicle.coverPhoto,
       tipo: vehicle.tipo,
     });
@@ -97,7 +98,7 @@ class SelectionStore {
         `${index + 1}. ${item.marca} ${item.modelo} ${item.version}`.trim(),
         item.year ? `Ano ${item.year}` : null,
         item.km ? `${item.km.toLocaleString('es-AR')} km` : null,
-        item.precio ? `${CONFIG.CURRENCY}${item.precio.toLocaleString('es-AR')}` : 'Precio a consultar',
+        item.precio ? `${item.precioCurrency === 'USD' ? 'USD ' : CONFIG.CURRENCY}${item.precio.toLocaleString('es-AR')}` : 'Precio a consultar',
       ].filter(Boolean).join(' | ');
 
       lines.push(detail);

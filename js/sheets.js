@@ -138,7 +138,9 @@ function parseGvizTable(table) {
     const tipo = cleanText(row.tipo) || 'Auto';
     const year = parseInteger(row.ano);
     const km = parseInteger(row.km);
-    const precio = parseInteger(row.precio);
+    const priceInfo = parsePriceValue(row.precio);
+    const precio = priceInfo.amount;
+    const precioCurrency = priceInfo.currency;
     const financiarRecibirUsado = getFinancingTradeInValue(row);
     const characteristics = getVehicleCharacteristicsFromRow(row);
 
@@ -154,6 +156,7 @@ function parseGvizTable(table) {
       combustible: cleanText(row.combustible) || 'No informado',
       transmision: cleanText(row.transmision) || 'No informado',
       precio,
+      precioCurrency,
       financiarRecibirUsado,
       characteristics,
       photos,
@@ -306,11 +309,15 @@ function getVehicleCharacteristicsFromRow(row) {
 }
 
 function getCellValue(cell) {
-  if (!cell || cell.v == null) {
+  if (!cell) {
     return '';
   }
 
-  return String(cell.v).trim();
+  const value = cell.f
+    || (cell.p && cell.p.title)
+    || String(cell.v || '');
+
+  return String(value).trim();
 }
 
 function hasVehicleIdentity(row) {
@@ -397,4 +404,45 @@ function cleanText(value) {
 function parseInteger(value) {
   const digits = String(value || '').replace(/[^\d]/g, '');
   return digits ? Number(digits) : 0;
+}
+
+function parsePriceValue(value) {
+  const rawValue = cleanText(value);
+
+  if (!rawValue) {
+    return { amount: 0, currency: '' };
+  }
+
+  const currency = /(?:usd|u\$s|u\$d)/i.test(rawValue) ? 'USD' : '';
+  const cleaned = rawValue.replace(/[^\d,.-]/g, '');
+
+  if (!cleaned) {
+    return { amount: 0, currency };
+  }
+
+  let normalized = cleaned;
+
+  if (cleaned.includes(',') && cleaned.includes('.')) {
+    if (cleaned.lastIndexOf(',') > cleaned.lastIndexOf('.')) {
+      normalized = cleaned.replace(/\./g, '').replace(/,/g, '.');
+    } else {
+      normalized = cleaned.replace(/,/g, '');
+    }
+  } else if (cleaned.includes(',')) {
+    const parts = cleaned.split(',');
+    const lastPart = parts[parts.length - 1];
+
+    if (lastPart.length === 3 && parts.length > 1) {
+      normalized = cleaned.replace(/,/g, '');
+    } else {
+      normalized = cleaned.replace(/,/g, '.');
+    }
+  }
+
+  const amount = Number(normalized);
+
+  return {
+    amount: Number.isFinite(amount) ? amount : 0,
+    currency,
+  };
 }

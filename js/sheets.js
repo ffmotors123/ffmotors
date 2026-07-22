@@ -313,8 +313,8 @@ function getCellValue(cell) {
     return '';
   }
 
-  const value = cell.f
-    || (cell.p && cell.p.title)
+  const value = (cell.p && cell.p.title)
+    || cell.f
     || String(cell.v || '');
 
   return String(value).trim();
@@ -428,11 +428,18 @@ function parsePriceValue(value) {
     } else {
       normalized = cleaned.replace(/,/g, '');
     }
+  } else if (cleaned.includes('.')) {
+    const parts = cleaned.split('.');
+    const lastPart = parts[parts.length - 1];
+
+    if (parts.length > 1 && lastPart.length === 3) {
+      normalized = cleaned.replace(/\./g, '');
+    }
   } else if (cleaned.includes(',')) {
     const parts = cleaned.split(',');
     const lastPart = parts[parts.length - 1];
 
-    if (lastPart.length === 3 && parts.length > 1) {
+    if (parts.length > 1 && lastPart.length === 3) {
       normalized = cleaned.replace(/,/g, '');
     } else {
       normalized = cleaned.replace(/,/g, '.');

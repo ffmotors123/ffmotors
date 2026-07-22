@@ -967,8 +967,9 @@ function getVehicleCoverPosition(vehicle, context = 'card') {
     'ford kuga': '70%',
     'citroen c3': '84%',
     'citroen c4': '76%',
-    'volkswagen gol': '75%',
+    'volkswagen gol': '70%',
     'volkswagen amarok': '86%',
+    'chevrolet onix': '78%',
   };
 
   return cardPositions[key] || '58%';

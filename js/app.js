@@ -225,7 +225,7 @@ function renderHeroMetrics() {
   }
 
   featuredTitle.textContent = vehicleHeading(featured);
-  featuredSubtitle.textContent = featured.version || '';
+  featuredSubtitle.textContent = `${formatYear(featured.year)} - ${formatKm(featured.km)}`;
   featuredPrice.textContent = formatPrice(featured.precio, featured.precioCurrency);
   featuredMedia.style.setProperty('--cover-position-y', getVehicleCoverPosition(featured, 'featured'));
   featuredMedia.innerHTML = getMainImageMarkup(featured.coverPhoto, vehicleHeading(featured));
@@ -378,7 +378,6 @@ function renderVehicleCard(vehicle) {
     <article class="vehicle-card" data-action="open-modal" data-id="${vehicle.id}">
       <div class="vehicle-media" style="--cover-position-y: ${escapeAttr(coverPosition)}; --cover-scale: ${escapeAttr(coverScale)};">
         ${getMainImageMarkup(vehicle.coverPhoto, vehicleHeading(vehicle))}
-        <span class="vehicle-badge">✓ Verif. policial</span>
         <span class="gallery-count">${vehicle.photos.length} fotos</span>
       </div>
 
@@ -401,7 +400,6 @@ function renderVehicleCard(vehicle) {
           ${renderSpecPill(vehicle.combustible)}
           ${renderSpecPill(vehicle.transmision)}
           ${renderSpecPill(vehicle.tipo)}
-          ${renderWideSpecPill(`Financia / usado: ${vehicle.financiarRecibirUsado || 'No informado'}`)}
           ${characteristicsMarkup}
         </div>
 
@@ -667,7 +665,6 @@ function renderVehicleModal(vehicle) {
     buildSpecCard('Kilometraje', vehicle.km ? vehicle.km.toLocaleString('es-AR') : 'No informado'),
     buildSpecCard('Combustible', vehicle.combustible),
     buildSpecCard('Transmision', vehicle.transmision),
-    buildSpecCard('Financia / recibe usado', vehicle.financiarRecibirUsado),
     ...getVehicleCharacteristics(vehicle).map(buildCharacteristicSpecCard),
   ].join('');
 
@@ -828,7 +825,6 @@ function buildSingleVehicleMessage(vehicle) {
     `${vehicleHeading(vehicle)} - ${vehicle.version}`,
     buildVehicleSummary(vehicle),
     `Precio: ${formatPrice(vehicle.precio, vehicle.precioCurrency)}`,
-    `Financia / recibe usado: ${vehicle.financiarRecibirUsado || 'No informado'}`,
   ];
 
   return lines.join('\n');
@@ -958,18 +954,21 @@ function getVehicleCoverPosition(vehicle, context = 'card') {
 
   const cardPositions = {
     'peugeot 208': '72%',
+    'peugeot 207': '80%',
     'zontes t2': '52%',
     'fiat strada': '70%',
-    'toyota yaris': '62%',
+    'toyota yaris': '72%',
     'jeep renegade': '62%',
     'chevrolet cruze': '66%',
     'peugeot 2008': '66%',
     'ford kuga': '70%',
+    'honda fit': '70%',
     'citroen c3': '84%',
     'citroen c4': '76%',
     'volkswagen gol': '70%',
     'volkswagen amarok': '86%',
     'chevrolet onix': '78%',
+    'toyota etios': '80%',
   };
 
   return cardPositions[key] || '58%';

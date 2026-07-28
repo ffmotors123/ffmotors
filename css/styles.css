@@ -542,7 +542,7 @@ img {
 .featured-subtitle {
   margin-top: -8px;
   color: var(--text-soft);
-  font-size: 1.05rem;
+  font-size: 1.35rem;
   font-weight: 600;
 }
 
@@ -1447,7 +1447,7 @@ img {
 }
 
 .vehicle-meta .spec-pill {
-  flex: 1 1 calc(33.333% - 10px);
+  flex: 1 1 calc(50% - 10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2333,7 +2333,7 @@ img {
 
   .vehicle-meta {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
 
@@ -2345,7 +2345,7 @@ img {
   }
 
   .vehicle-meta .spec-pill-wide {
-    grid-column: span 2;
+    grid-column: span 1;
     white-space: nowrap;
   }
 

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Cotizador | FF Motors</title>
+  <link rel="icon" type="image/png" href="../img/favicon-circle-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/cotizador.css">
+</head>
+<body>
+
+  <header class="cz-header">
+    <div class="cz-shell cz-header-inner">
+      <a class="cz-brand" href="../">
+        <img src="../img/Dise%C3%B1o%20sin%20t%C3%ADtulo.png" alt="FF Motors">
+        <span>Cotizador</span>
+      </a>
+      <div class="cz-dolar" id="dolarBox">Dólar blue: cargando...</div>
+    </div>
+  </header>
+
+  <main class="cz-shell">
+    <div class="cz-notice" id="keyNotice" hidden>
+      Usando ArgAutos sin API key: máximo 3 consultas por minuto. Si se supera, el cotizador espera y reintenta solo.
+    </div>
+
+    <section class="cz-card">
+      <div class="cz-card-head">
+        <div>
+          <p class="cz-eyebrow">Paso <span id="stepNumber">1</span> de <span id="stepTotal">6</span></p>
+          <h1 id="stepTitle">¿Qué tipo de vehículo?</h1>
+        </div>
+        <button class="cz-link-btn" id="resetBtn" type="button" hidden>Empezar de nuevo</button>
+      </div>
+
+      <nav class="cz-crumbs" id="crumbs" aria-label="Selección actual"></nav>
+
+      <input class="cz-search" id="stepSearch" type="search" placeholder="Buscar..." autocomplete="off" hidden>
+      <p class="cz-status" id="stepStatus" hidden></p>
+      <div class="cz-options" id="options"></div>
+
+      <form class="cz-km-form" id="kmForm" hidden>
+        <label for="kmInput">Kilometraje actual</label>
+        <div class="cz-km-row">
+          <input id="kmInput" type="text" inputmode="numeric" placeholder="Ej: 85.000">
+          <button class="cz-primary" id="quoteBtn" type="submit">Cotizar</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="cz-result" id="result" hidden>
+      <div class="cz-card">
+        <p class="cz-eyebrow">Valor de mercado · Córdoba</p>
+        <h2 id="resTitle"></h2>
+        <p class="cz-muted" id="resSubtitle"></p>
+
+        <div class="cz-values">
+          <article class="cz-value cz-value--main">
+            <span>Valor de mercado (según km)</span>
+            <strong id="resMarketArs"></strong>
+            <em id="resMarketUsd"></em>
+          </article>
+          <article class="cz-value cz-value--accent">
+            <span>Precio sugerido (perfecto estado)</span>
+            <strong id="resSuggestedArs"></strong>
+            <em id="resSuggestedUsd"></em>
+          </article>
+          <article class="cz-value">
+            <span>Rango de mercado</span>
+            <strong id="resRangeArs"></strong>
+            <em id="resRangeUsd"></em>
+          </article>
+        </div>
+
+        <p class="cz-muted cz-small" id="resMeta"></p>
+
+        <h3 class="cz-subtitle">Ficha técnica</h3>
+        <dl class="cz-specs" id="resSpecs"></dl>
+
+        <h3 class="cz-subtitle">Seguridad · Latin NCAP</h3>
+        <div class="cz-safety" id="resSafety"></div>
+
+        <h3 class="cz-subtitle">Fotos de referencia</h3>
+        <div class="cz-photos" id="resPhotos"></div>
+
+        <div class="cz-actions">
+          <button class="cz-primary" id="pdfBtn" type="button">Descargar PDF</button>
+          <button class="cz-secondary" id="againBtn" type="button">Nueva cotización</button>
+        </div>
+      </div>
+    </section>
+
+    <details class="cz-card cz-settings">
+      <summary>Ajustes del cálculo</summary>
+      <div class="cz-settings-grid">
+        <label>Ajuste de mercado Córdoba (%)
+          <input id="set-ajusteMercado" type="number" step="0.5">
+          <small>Se suma al valor guía. Calibralo comparando con tus ventas reales.</small>
+        </label>
+        <label>Prima por perfecto estado (%)
+          <input id="set-primaEstado" type="number" step="0.5">
+          <small>Cuánto más vale una unidad impecable (precio sugerido).</small>
+        </label>
+        <label>Amplitud del rango (± %)
+          <input id="set-rango" type="number" step="0.5" min="0">
+          <small>Ancho del rango de mercado alrededor del valor.</small>
+        </label>
+      </div>
+    </details>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/argautos.js"></script>
+  <script src="js/specs.js"></script>
+  <script src="js/pricing.js"></script>
+  <script src="js/safety.js"></script>
+  <script src="js/photos.js"></script>
+  <script src="js/pdf.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

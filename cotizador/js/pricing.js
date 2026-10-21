@@ -32,7 +32,7 @@
       market,
       low: market * (1 - s.rango / 100),
       high: market * (1 + s.rango / 100),
-      suggested: base * (1 + s.primaEstado / 100),
+      suggested: market * (1 + s.primaEstado / 100), // parte del valor por km, así nunca queda debajo del de mercado
     };
 
     return {

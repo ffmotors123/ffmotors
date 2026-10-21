@@ -3,7 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FF Motors | Venta de Autos</title>
+  <title>FF Motors | Peritaje y venta de autos usados en Córdoba</title>
+  <meta name="description" content="Peritamos tu próximo usado antes de que lo pagues: escáner, pintura panel por panel y prueba de manejo. También vendemos tu auto por vos. Córdoba.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="FF Motors | Peritaje y venta de autos usados en Córdoba">
+  <meta property="og:description" content="Peritamos tu próximo usado antes de que lo pagues: escáner, pintura panel por panel y prueba de manejo. También vendemos tu auto por vos.">
+  <meta property="og:url" content="https://ffmotors.com.ar/">
+  <meta property="og:image" content="https://ffmotors.com.ar/img/favicon-circle-512.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "AutomotiveBusiness",
+    "name": "FF Motors",
+    "url": "https://ffmotors.com.ar/",
+    "telephone": "+54 351 310-7854",
+    "image": "https://ffmotors.com.ar/img/favicon-circle-512.png",
+    "description": "Peritaje precompra, venta integral y búsqueda personalizada de autos usados en Córdoba.",
+    "areaServed": { "@type": "AdministrativeArea", "name": "Provincia de Córdoba, Argentina" },
+    "sameAs": ["https://www.instagram.com/ffmotors_ok/", "https://www.tiktok.com/@ffmotors_"],
+    "makesOffer": [
+      { "@type": "Offer", "name": "Peritaje precompra", "price": "80000", "priceCurrency": "ARS" },
+      { "@type": "Offer", "name": "Búsqueda personalizada", "price": "150000", "priceCurrency": "ARS" }
+    ]
+  }
+  </script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-MS6M9D04N9"></script>
   <script>
@@ -36,6 +59,8 @@
         <a href="#catalogo">Stock</a>
         <a href="#vendidos">Vendidos</a>
         <a href="#servicios">Servicios</a>
+        <a href="#peritaje">Peritaje</a>
+        <a href="#resenas">Reseñas</a>
       </nav>
 
       <div class="header-actions">
@@ -49,14 +74,14 @@
   <main>
     <section class="hero" id="inicio">
       <div class="hero-copy">
-        <p class="eyebrow">Usados seleccionados | gestion simple | atencion directa</p>
+        <p class="eyebrow">Usados seleccionados | Gestión simple | Atención directa</p>
         <h1 class="hero-title-custom">
-          <span>compra mejor</span>
-          <span>vende mas facil</span>
+          <span>Comprá mejor.</span>
+          <span>Vendé más fácil.</span>
         </h1>
         <h1>Vendé tu auto sin hacer nada.</h1>
         <p class="hero-text">
-          Gestionamos ventas, buscamos vehículos a medida y realizamos peritajes precompra para que tomes decisiones con seguridad.
+          Peritamos tu próximo usado antes de que lo pagues, vendemos tu auto por vos y te buscamos el que necesitás. En toda la provincia de Córdoba.
         </p>
 
         <div class="hero-actions" id="heroActions">
@@ -111,16 +136,15 @@
     <section class="benefits-strip">
       <article class="benefit-cta-card">
         <strong>Quiero vender mi auto</strong>
-        <p class="benefit-cta-copy">Te acompanamos en todo el proceso de venta con atencion personalizada.</p>
-        <p>Explora el stock con busqueda, filtros y orden por precio, año o kilometraje.</p>
+        <p class="benefit-cta-copy">Te acompañamos en todo el proceso de venta con atención personalizada.</p>
       </article>
       <article class="benefit-cta-card">
         <strong>Busco un auto</strong>
-        <p>Encontramos opciones a medida segun tus necesidades y presupuesto.</p>
+        <p>Encontramos opciones a medida según tus necesidades y presupuesto.</p>
       </article>
       <article class="benefit-cta-card">
         <strong>Solicitar peritaje</strong>
-        <p>Revisamos el vehiculo antes de comprar para que avances con tranquilidad.</p>
+        <p>Revisamos el vehículo antes de que lo compres, para que decidas con información.</p>
       </article>
     </section>
 
@@ -128,7 +152,7 @@
       <div class="section-heading">
         <div>
           <p class="section-eyebrow">Stock disponible</p>
-          <h2>Elegí tu proxima unidad</h2>
+          <h2>Elegí tu próxima unidad</h2>
         </div>
         <p class="results-summary" id="resultsSummary">Cargando stock...</p>
       </div>
@@ -202,13 +226,13 @@
       </div>
 
       <div class="error-msg" id="errorMsg" hidden>
-        <p>No se pudo cargar el stock. Revisa el nombre de la hoja y la publicacion de Google Sheets.</p>
+        <p>No pudimos cargar el stock en este momento. Probá de nuevo o escribinos por WhatsApp.</p>
         <button class="retry-btn" id="retryBtn" type="button">Reintentar</button>
       </div>
 
       <div class="empty-state" id="emptyState" hidden>
         <h3>No encontramos unidades con esos filtros</h3>
-        <p>Prueba limpiando la busqueda o cambiando tipo y marca.</p>
+        <p>Probá limpiando la búsqueda o cambiando tipo y marca.</p>
       </div>
 
       <div class="vehicles-grid view-large" id="vehiclesGrid"></div>
@@ -229,8 +253,8 @@
       </div>
 
       <div class="empty-state" id="soldEmptyState" hidden>
-        <h3>Todavia no hay unidades vendidas publicadas</h3>
-        <p>Cuando cargues la hoja vendidos, apareceran aca.</p>
+        <h3>Todavía no hay unidades vendidas publicadas</h3>
+        <p>Muy pronto vas a ver acá los autos que vendimos.</p>
       </div>
 
       <div class="sold-grid" id="soldVehiclesGrid"></div>
@@ -249,42 +273,45 @@
           <article class="service-card service-card--media">
             <div class="service-card-body">
               <span class="service-number">01</span>
-              <h3>Venta integral de vehiculos</h3>
-              <p>Nos encargamos de vender tu auto de principio a fin. Publicacion, atencion de consultas, coordinacion de visitas, negociacion y acompanamiento durante todo el proceso.</p>
-              <button class="service-cta" type="button" data-service-message="Hola FF Motors, quiero vender mi auto. Me gustaria recibir informacion sobre el servicio de venta integral de vehiculos.">
+              <h3>Venta integral de vehículos</h3>
+              <p>Nos encargamos de vender tu auto de principio a fin: publicación, consultas, coordinación de visitas, negociación y acompañamiento con los trámites. El auto queda siempre con vos.</p>
+              <p class="service-price"><strong>4%</strong> sobre la venta, cuando se vende</p>
+              <button class="service-cta" type="button" data-service-message="Hola FF Motors, quiero vender mi auto. Me gustaría recibir información sobre el servicio de venta integral.">
                 Quiero vender mi auto
               </button>
             </div>
             <div class="service-card-image">
-              <img src="img/venta-integral-vehiculos.jpg" alt="Entrega de llaves en una venta de vehiculo">
+              <img src="img/venta-integral-vehiculos.jpg" alt="Entrega de llaves en una venta de vehículo">
             </div>
           </article>
 
           <article class="service-card service-card--media">
             <div class="service-card-body">
               <span class="service-number">02</span>
-              <h3>Busqueda personalizada de vehiculos</h3>
-              <p>Encontramos el auto que estas buscando segun tus necesidades, preferencias y presupuesto. Filtramos opciones y te acompanamos para que ahorres tiempo y evites malas decisiones.</p>
-              <button class="service-cta" type="button" data-service-message="Hola FF Motors, busco un auto y me interesa el servicio de busqueda personalizada de vehiculos.">
+              <h3>Búsqueda personalizada de vehículos</h3>
+              <p>Encontramos el auto que estás buscando según tus necesidades, preferencias y presupuesto. Filtramos opciones y te acompañamos para que ahorres tiempo y evites malas decisiones.</p>
+              <p class="service-price"><strong>$150.000</strong> que cobramos recién cuando elegís el auto</p>
+              <button class="service-cta" type="button" data-service-message="Hola FF Motors, busco un auto y me interesa el servicio de búsqueda personalizada.">
                 Busco un auto
               </button>
             </div>
             <div class="service-card-image">
-              <img src="img/busqueda-personalizada-vehiculos.png" alt="Icono de busqueda de vehiculos con lupa">
+              <img src="img/busqueda-personalizada-vehiculos.png" alt="Ícono de búsqueda de vehículos con lupa">
             </div>
           </article>
 
           <article class="service-card service-card--media">
             <div class="service-card-body">
               <span class="service-number">03</span>
-              <h3>Peritaje y revision precompra</h3>
-              <p>Inspeccionamos vehiculos para compradores que ya tienen opciones vistas pero no cuentan con conocimientos mecanicos. Evaluamos el estado general y detectamos posibles fallas o detalles ocultos antes de comprar.</p>
-              <button class="service-cta" type="button" data-service-message="Hola FF Motors, quiero solicitar un peritaje y revision precompra para un vehiculo.">
+              <h3>Peritaje y revisión precompra</h3>
+              <p>Para cuando ya tenés un auto visto y no sabés de mecánica. Vamos adonde está el auto y lo revisamos con escáner, medidor de pintura, revisión mecánica y prueba de manejo. Te llevás el PDF del escáner, un informe escrito y nuestro veredicto.</p>
+              <p class="service-price"><strong>$80.000</strong> + viáticos si el auto está lejos</p>
+              <button class="service-cta" type="button" data-service-message="Hola FF Motors, quiero solicitar un peritaje precompra para un vehículo.">
                 Solicitar peritaje
               </button>
             </div>
             <div class="service-card-image">
-              <img src="img/peritaje-revision-precompra.jpg" alt="Equipo de diagnostico conectado para peritaje vehicular">
+              <img src="img/peritaje-revision-precompra.jpg" alt="Equipo de diagnóstico conectado para peritaje vehicular">
             </div>
           </article>
         </div>
@@ -298,6 +325,128 @@
           </div>
           <button class="services-arrow" id="servicesNext" aria-label="Servicio siguiente">&#8250;</button>
         </div>
+      </div>
+    </section>
+
+    <section class="services-section info-section" id="peritaje">
+      <div class="section-heading">
+        <div>
+          <p class="section-eyebrow">Peritaje precompra</p>
+          <h2>Cómo es un peritaje</h2>
+        </div>
+        <p class="results-summary">En unos 30 peritajes encontramos 3 autos con los kilómetros bajados. Eso no se ve mirando el auto.</p>
+      </div>
+
+      <div class="steps-grid">
+        <article class="step-card">
+          <span class="service-number">01</span>
+          <h3>Escaneo OBD II</h3>
+          <p>Conectamos el escáner Autel: kilómetros reales, fallas electrónicas y cada cuánto le cambiaron el aceite.</p>
+        </article>
+        <article class="step-card">
+          <span class="service-number">02</span>
+          <h3>Pintura panel por panel</h3>
+          <p>Medimos el espesor de la pintura en todos los paneles, techo primero. Así aparecen el repintado y la masilla.</p>
+        </article>
+        <article class="step-card">
+          <span class="service-number">03</span>
+          <h3>Revisión visual y mecánica</h3>
+          <p>Estructura, ópticas, paragolpes, cubiertas, pastillas de freno, pérdidas de aceite y si gasea con el motor caliente.</p>
+        </article>
+        <article class="step-card">
+          <span class="service-number">04</span>
+          <h3>Prueba de manejo</h3>
+          <p>Lo manejamos para revisar tren delantero, frenos, caja y embrague.</p>
+        </article>
+      </div>
+
+      <div class="deliver-box">
+        <div>
+          <p class="section-eyebrow">Qué te llevás</p>
+          <ul class="deliver-list">
+            <li>El PDF del escáner</li>
+            <li>Un informe escrito por nosotros</li>
+            <li>Nuestro veredicto: <strong>recomendación de compra</strong> o <strong>no comprar</strong></li>
+          </ul>
+        </div>
+        <div class="deliver-price">
+          <strong>$80.000</strong>
+          <span>Vamos adonde está el auto, en toda la provincia de Córdoba. Viáticos según la distancia.</span>
+          <a class="service-cta" href="https://wa.me/543513107854?text=Hola%20FF%20Motors%2C%20quiero%20coordinar%20un%20peritaje%20precompra." target="_blank" rel="noreferrer">Coordinar por WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="services-section info-section" id="resenas">
+      <div class="section-heading">
+        <div>
+          <p class="section-eyebrow">Quiénes somos</p>
+          <h2>Franco y Fede, las dos F</h2>
+        </div>
+        <p class="results-summary">Hace 4 años que ofrecemos servicio de venta de autos usados en Córdoba, y hace uno que peritamos. Informamos el estado real de cada auto al momento de revisarlo, para que decidas antes de pagar.</p>
+      </div>
+
+      <div class="reviews-grid">
+        <blockquote class="review-card">
+          <p>“Hoy tengo un Fiat Mobi impecable. No me dio ni un solo problema.”</p>
+          <cite>Fausto · Fiat Mobi</cite>
+        </blockquote>
+        <blockquote class="review-card">
+          <p>“Son gente de palabra y el auto excelente.”</p>
+          <cite>Ernesto · Renault Captur 2022</cite>
+        </blockquote>
+        <blockquote class="review-card">
+          <p>“Me transmitieron muchísima confianza en cada paso.”</p>
+          <cite>Ivanna · Chevrolet Onix</cite>
+        </blockquote>
+        <blockquote class="review-card">
+          <p>“Ellos se encargaron de sacar turno al registro y demás.”</p>
+          <cite>Javier · VW Amarok 2017</cite>
+        </blockquote>
+        <blockquote class="review-card">
+          <p>“Cumplieron con todo lo hablado.”</p>
+          <cite>Miguel · Renault Duster 2015, Villa de Soto</cite>
+        </blockquote>
+        <blockquote class="review-card">
+          <p>“Al final también nos ayudaron con los trámites.”</p>
+          <cite>Pía · VW Polo</cite>
+        </blockquote>
+      </div>
+    </section>
+
+    <section class="services-section info-section" id="preguntas">
+      <div class="section-heading">
+        <div>
+          <p class="section-eyebrow">Preguntas frecuentes</p>
+          <h2>Lo que más nos preguntan</h2>
+        </div>
+      </div>
+
+      <div class="faq-list">
+        <details>
+          <summary>¿Cuánto sale el peritaje y qué incluye?</summary>
+          <p>$80.000. Incluye escaneo OBD II, medición de pintura en todos los paneles, revisión visual y mecánica y prueba de manejo. Te entregamos el PDF del escáner, un informe escrito y nuestro veredicto.</p>
+        </details>
+        <details>
+          <summary>¿Van a concesionarias y agencias?</summary>
+          <p>Sí. Vamos adonde esté el auto: un particular, una agencia, una concesionaria o un complejo. Peritamos todos los autos de la misma forma.</p>
+        </details>
+        <details>
+          <summary>¿Qué pasa si el auto está lejos?</summary>
+          <p>Trabajamos en toda la provincia de Córdoba. Si el auto está lejos, se suman viáticos según la distancia. Te lo decimos antes de coordinar.</p>
+        </details>
+        <details>
+          <summary>¿El peritaje es una garantía?</summary>
+          <p>No. Te informamos el estado real del auto al momento del peritaje, para que decidas con información antes de pagar.</p>
+        </details>
+        <details>
+          <summary>Si me venden el auto, ¿tengo que dejárselo?</summary>
+          <p>No. El auto queda siempre con vos. Nosotros publicamos, respondemos consultas, coordinamos visitas y negociamos. Cobramos el 4% cuando se vende.</p>
+        </details>
+        <details>
+          <summary>¿Cuándo se cobra la búsqueda personalizada?</summary>
+          <p>Recién cuando elegís el auto. Antes de eso buscamos, filtramos y descartamos opciones sin costo.</p>
+        </details>
       </div>
     </section>
   </main>
@@ -343,12 +492,16 @@
     <div class="footer-shell">
       <div class="footer-brand-lockup">
         <img class="footer-brand-image" src="img/Dise%C3%B1o%20sin%20t%C3%ADtulo.png" alt="FF Motors">
-        <p class="footer-brand-text">FF Motors</p>
+        <div>
+          <p class="footer-brand-text">FF Motors</p>
+          <p class="footer-copy">Peritaje y venta de autos usados · Córdoba · WhatsApp 351 310-7854</p>
+        </div>
       </div>
 
       <div class="footer-links">
         <a id="footerWhatsappLink" href="#" target="_blank" rel="noreferrer">Escribir por WhatsApp</a>
         <a href="https://www.instagram.com/ffmotors_ok/" target="_blank" rel="noreferrer">Instagram</a>
+        <a href="https://www.tiktok.com/@ffmotors_" target="_blank" rel="noreferrer">TikTok</a>
       </div>
     </div>
   </footer>

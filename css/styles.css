@@ -2118,6 +2118,147 @@ img {
   color: #fff;
 }
 
+/* ── Prices, peritaje, reviews and FAQ ───────── */
+.service-price {
+  color: var(--sand) !important;
+  font-weight: 600;
+}
+
+.service-price strong {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.7rem;
+  letter-spacing: 0.03em;
+  margin-right: 6px;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.step-card,
+.deliver-box {
+  border-radius: 26px;
+  background:
+    linear-gradient(180deg, rgba(17, 37, 64, 0.98), rgba(12, 24, 42, 0.92)),
+    #11203a;
+  color: var(--text);
+}
+
+.step-card {
+  padding: 26px 24px;
+}
+
+.step-card h3 {
+  margin-top: 16px;
+  font-size: 1.3rem;
+}
+
+.step-card p {
+  margin-top: 10px;
+  color: var(--text-soft);
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.deliver-box {
+  margin-top: 16px;
+  padding: 30px 32px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 28px;
+  align-items: center;
+}
+
+.deliver-list {
+  margin-top: 14px;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  font-size: 1.08rem;
+}
+
+.deliver-list li::before {
+  content: '✓';
+  color: var(--sand);
+  font-weight: 800;
+  margin-right: 10px;
+}
+
+.deliver-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 340px;
+}
+
+.deliver-price strong {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 4.2rem;
+  line-height: 1;
+  color: var(--sand);
+}
+
+.deliver-price span {
+  margin-top: 6px;
+  color: var(--text-soft);
+}
+
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.review-card {
+  margin: 0;
+  padding: 26px 24px;
+  border-radius: 22px;
+  background: #fff;
+  border: 1px solid var(--line-dark);
+  border-left: 5px solid var(--sand);
+}
+
+.review-card p {
+  font-size: 1.08rem;
+  line-height: 1.5;
+  color: var(--text-dark);
+}
+
+.review-card cite {
+  display: block;
+  margin-top: 14px;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--text-dark-soft);
+}
+
+.faq-list {
+  display: grid;
+  gap: 12px;
+}
+
+.faq-list details {
+  padding: 20px 24px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid var(--line-dark);
+}
+
+.faq-list summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.08rem;
+  color: var(--text-dark);
+}
+
+.faq-list details p {
+  margin-top: 12px;
+  color: var(--text-dark-soft);
+  line-height: 1.6;
+}
+
 .toast {
   position: fixed;
   left: 50%;
@@ -2169,6 +2310,15 @@ img {
   .service-card-image {
     width: 100%;
     height: 200px;
+  }
+
+  .steps-grid,
+  .reviews-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .deliver-box {
+    grid-template-columns: 1fr;
   }
 
   .modal-layout {
@@ -2246,6 +2396,21 @@ img {
 
   .header-actions {
     gap: 8px;
+  }
+
+  .steps-grid,
+  .reviews-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .deliver-box {
+    padding: 24px 20px;
+  }
+
+  .info-section .section-heading {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .header-whatsapp {

@@ -373,7 +373,7 @@
   // ---------- Eventos ----------
   API.setWaitHandler((seconds) => {
     setStatus(seconds
-      ? `ArgAutos limita las consultas sin API key. Reintentando en ${seconds} s...`
+      ? `Buscando precios actualizados... (${seconds} s)`
       : 'Cargando...');
   });
 
@@ -415,7 +415,6 @@
     }
   });
 
-  if (!cfg.argautosKey) $('keyNotice').hidden = false;
   initSettings();
   loadDolar();
   render();

@@ -60,6 +60,9 @@ const heroCount = document.getElementById('heroCount');
 const featuredHighlights = document.getElementById('featuredHighlights');
 const headerWhatsappLink = document.getElementById('headerWhatsappLink');
 const footerWhatsappLink = document.getElementById('footerWhatsappLink');
+const menuWhatsappLink = document.getElementById('menuWhatsappLink');
+const menuToggle = document.getElementById('menuToggle');
+const mobileMenu = document.getElementById('mobileMenu');
 const heroActions = document.getElementById('heroActions');
 const servicesTrack = document.getElementById('servicesTrack');
 
@@ -123,7 +126,16 @@ function bindUI() {
   galleryPrev.addEventListener('click', e => { e.stopPropagation(); navigateGallery(-1); });
   galleryNext.addEventListener('click', e => { e.stopPropagation(); navigateGallery(1); });
 
+  menuToggle.addEventListener('click', () => setMobileMenu(mobileMenu.hidden));
+  mobileMenu.addEventListener('click', event => {
+    if (event.target.closest('a')) setMobileMenu(false);
+  });
+  document.addEventListener('click', event => {
+    if (!mobileMenu.hidden && !event.target.closest('.site-header')) setMobileMenu(false);
+  });
+
   document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !mobileMenu.hidden) { setMobileMenu(false); return; }
     if (event.key === 'Escape') { closeVehicleModal(); return; }
     if (event.key === 'ArrowLeft') navigateGallery(-1);
     if (event.key === 'ArrowRight') navigateGallery(1);
@@ -870,6 +882,14 @@ function syncContactLinks() {
   const url = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}`;
   headerWhatsappLink.href = url;
   footerWhatsappLink.href = url;
+  menuWhatsappLink.href = url;
+}
+
+function setMobileMenu(open) {
+  mobileMenu.hidden = !open;
+  menuToggle.classList.toggle('is-open', open);
+  menuToggle.setAttribute('aria-expanded', String(open));
+  menuToggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
 }
 
 function openWhatsApp(message) {
